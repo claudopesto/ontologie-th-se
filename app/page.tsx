@@ -51,28 +51,31 @@ export default function Home() {
   // Filter concepts based on selected filter
   const filteredConcepts = concepts.filter(concept => {
     if (selectedFilter === 'all') return true;
+
+    // For CIENS filter, include concepts with "CIENS" or "Thèse + CIENS"
+    if (selectedFilter === 'CIENS') {
+      return concept.travaux.includes('CIENS');
+    }
+
+    // For Thèse filter, include concepts with "Thèse" or "Thèse + CIENS"
+    if (selectedFilter === 'Thèse') {
+      return concept.travaux.includes('Thèse');
+    }
+
     return concept.travaux === selectedFilter;
   });
 
   return (
     <div className="flex flex-col h-screen bg-white">
       {/* Header */}
-      <header className="px-6 py-4 shadow-md text-center" style={{ backgroundColor: '#7c81fd' }}>
-        <h1 className="text-2xl font-bold text-white">Travaux de thèse d&apos;Elsa Novelli</h1>
+      <header className="px-4 md:px-6 py-3 md:py-4 shadow-md text-center" style={{ backgroundColor: '#7c81fd' }}>
+        <h1 className="text-lg md:text-2xl font-bold text-white">Recherches universitaires d&apos;Elsa Novelli</h1>
       </header>
 
-      {/* Main Content Area */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left: Graph Visualization */}
-        <div className="flex-1 border-r border-gray-300">
-          <OntologyGraph
-            concepts={filteredConcepts}
-            onNodeClick={setSelectedConcept}
-          />
-        </div>
-
-        {/* Right: Concept List Sidebar */}
-        <div className="w-80">
+      {/* Main Content Area - Three Column Layout */}
+      <div className="flex flex-1 overflow-hidden m-2 md:m-4 gap-2 md:gap-4">
+        {/* Left: Menu/Filters */}
+        <div className="w-80 border border-gray-300 rounded-xl overflow-y-auto shadow-sm">
           <ConceptSidebar
             concepts={filteredConcepts}
             selectedConcept={selectedConcept}
@@ -81,11 +84,20 @@ export default function Home() {
             onFilterChange={setSelectedFilter}
           />
         </div>
-      </div>
 
-      {/* Bottom: Concept Definition */}
-      <div className="h-64 overflow-y-auto border-t border-gray-300">
-        <ConceptDetail concept={selectedConcept} />
+        {/* Center: Graph Visualization */}
+        <div className="flex-1 border border-gray-300 rounded-xl overflow-hidden shadow-sm">
+          <OntologyGraph
+            concepts={concepts}
+            onNodeClick={setSelectedConcept}
+            selectedFilter={selectedFilter}
+          />
+        </div>
+
+        {/* Right: Concept Definition */}
+        <div className="w-96 overflow-y-auto border border-gray-300 rounded-xl shadow-sm">
+          <ConceptDetail concept={selectedConcept} />
+        </div>
       </div>
     </div>
   );

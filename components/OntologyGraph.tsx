@@ -1,17 +1,22 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Concept, GraphData, GraphNode } from '@/types/ontology';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { Concept, GraphData } from '@/types/ontology';
 
 interface OntologyGraphProps {
   concepts: Concept[];
   onNodeClick: (concept: Concept) => void;
+  selectedFilter: string;
 }
 
-export default function OntologyGraph({ concepts, onNodeClick }: OntologyGraphProps) {
+export default function OntologyGraph({ concepts, onNodeClick, selectedFilter }: OntologyGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const fgRef = useRef<any>(null);
   const [ForceGraph2D, setForceGraph2D] = useState<any>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const [highlightNodes, setHighlightNodes] = useState<Set<string>>(new Set());
+  const [highlightLinks, setHighlightLinks] = useState<Set<string>>(new Set());
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
 
   // Import react-force-graph-2d dynamically (client-side only)
   useEffect(() => {
@@ -38,41 +43,126 @@ export default function OntologyGraph({ concepts, onNodeClick }: OntologyGraphPr
 
   // Function to get color based on travaux
   const getColorForTravaux = (travaux: string): string => {
-    if (travaux === 'Thèse') {
-      return '#080d94'; // Blue for Thèse
-    } else if (travaux === 'CIENS') {
-      return '#e2a9f1'; // Purple for CIENS
+    // If travaux contains both "Thèse" and "CIENS", use CIENS color
+    if (travaux.includes('CIENS')) {
+      return '#e2a9f1'; // Purple for CIENS (including Thèse + CIENS)
+    } else if (travaux.includes('Thèse')) {
+      return '#080d94'; // Blue for Thèse only
     }
     return '#4A90E2'; // Default color
   };
 
-  // Generate graph data from concepts
-  const graphData: GraphData = {
-    nodes: concepts.map((concept) => ({
-      id: concept.label,
-      label: concept.label,
-      color: getColorForTravaux(concept.travaux),
-    })),
-    links: [], // You can add relationships here if your ontology has them
-  };
+  // Generate graph data from concepts with useMemo to avoid recreating on every render
+  const graphData: GraphData = useMemo(() => {
+    // Filter concepts based on selected filter
+    const filteredConcepts = concepts.filter(concept => {
+      if (selectedFilter === 'all') return true;
+      if (selectedFilter === 'CIENS') {
+        return concept.travaux.includes('CIENS');
+      }
+      if (selectedFilter === 'Thèse') {
+        return concept.travaux.includes('Thèse');
+      }
+      return concept.travaux === selectedFilter;
+    });
 
-  // Add some sample links to create a connected graph visualization
-  // This creates a circular layout - you can modify based on your ontology structure
-  for (let i = 0; i < graphData.nodes.length - 1; i++) {
-    if (i % 3 === 0 && i + 3 < graphData.nodes.length) {
-      graphData.links.push({
-        source: graphData.nodes[i].id,
-        target: graphData.nodes[i + 3].id,
-      });
-    }
-  }
+    const data: GraphData = {
+      nodes: filteredConcepts.map((concept) => ({
+        id: concept.label,
+        label: concept.label,
+        color: getColorForTravaux(concept.travaux),
+      })),
+      links: [],
+    };
 
-  const handleNodeClick = (node: GraphNode) => {
+    // Add real relationships from the concepts' relations field
+    // Use ALL concepts to find relations, but only add links if both nodes are in filtered set
+    const addedLinks = new Set<string>(); // To avoid duplicate links
+    
+    concepts.forEach((concept) => {
+      if (concept.relations && concept.relations.trim()) {
+        // Split relations by semicolon and trim whitespace
+        const relatedConcepts = concept.relations
+          .split(';')
+          .map(r => r.trim())
+          .filter(r => r); // Remove empty strings
+
+        console.log(`Concept "${concept.label}" has relations:`, relatedConcepts);
+
+        // Create a link for each related concept
+        relatedConcepts.forEach((targetLabel) => {
+          // Check if both source and target exist in our filtered nodes
+          const sourceExists = data.nodes.some(node => node.id === concept.label);
+          const targetExists = data.nodes.some(node => node.id === targetLabel);
+
+          if (sourceExists && targetExists) {
+            // Create a unique identifier for this link (sorted to avoid duplicates)
+            const linkId = [concept.label, targetLabel].sort().join('-');
+            
+            if (!addedLinks.has(linkId)) {
+              data.links.push({
+                source: concept.label,
+                target: targetLabel,
+              });
+              addedLinks.add(linkId);
+              console.log(`Created link: ${concept.label} -> ${targetLabel}`);
+            }
+          }
+        });
+      }
+    });
+
+    console.log('Total links created:', data.links.length);
+    console.log('Links:', data.links);
+
+    return data;
+  }, [concepts, selectedFilter]);
+
+  const handleNodeClick = useCallback((node: any) => {
     const concept = concepts.find(c => c.label === node.id);
     if (concept) {
+      // Mark this node as selected for visual enlargement
+      setSelectedNode(node.id);
+
+      // Find all connected nodes and links by accessing graphData from current graph
+      const connectedNodes = new Set<string>();
+      const connectedLinks = new Set<string>();
+
+      connectedNodes.add(node.id);
+
+      // Get links directly from the force graph data to avoid stale closure
+      if (fgRef.current && fgRef.current.graphData) {
+        const currentGraphData = fgRef.current.graphData();
+        if (currentGraphData && currentGraphData.links) {
+          currentGraphData.links.forEach((link: any) => {
+            const sourceId = typeof link.source === 'object' ? link.source.id : link.source;
+            const targetId = typeof link.target === 'object' ? link.target.id : link.target;
+
+            if (sourceId === node.id) {
+              connectedNodes.add(targetId);
+              connectedLinks.add(`${sourceId}-${targetId}`);
+            }
+            if (targetId === node.id) {
+              connectedNodes.add(sourceId);
+              connectedLinks.add(`${sourceId}-${targetId}`);
+            }
+          });
+        }
+      }
+
+      setHighlightNodes(connectedNodes);
+      setHighlightLinks(connectedLinks);
+
+      // Zoom to node
+      if (fgRef.current && node.x !== undefined && node.y !== undefined) {
+        fgRef.current.centerAt(node.x, node.y, 1000);
+        fgRef.current.zoom(2, 1000);
+      }
+
+      // Trigger definition display
       onNodeClick(concept);
     }
-  };
+  }, [concepts, onNodeClick]);
 
   if (!ForceGraph2D) {
     return (
@@ -82,48 +172,112 @@ export default function OntologyGraph({ concepts, onNodeClick }: OntologyGraphPr
     );
   }
 
+  const handleReset = () => {
+    setHighlightNodes(new Set());
+    setHighlightLinks(new Set());
+    setSelectedNode(null);
+    if (fgRef.current) {
+      fgRef.current.zoomToFit(1000);
+    }
+  };
+
   return (
-    <div ref={containerRef} className="w-full h-full bg-white">
+    <div ref={containerRef} className="w-full h-full bg-white relative">
+      {highlightNodes.size > 0 && (
+        <button
+          onClick={handleReset}
+          className="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+          aria-label="Réinitialiser le zoom"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 text-gray-700"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      )}
       <ForceGraph2D
+        ref={fgRef}
         graphData={graphData}
         width={dimensions.width}
         height={dimensions.height}
         nodeLabel="label"
         nodeColor="color"
-        nodeRelSize={6}
-        linkColor={() => '#999'}
-        linkWidth={1.5}
+        nodePointerAreaPaint={(node: any, color: string, ctx: CanvasRenderingContext2D) => {
+          // Simple large clickable area
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, 40, 0, 2 * Math.PI, false);
+          ctx.fill();
+        }}
+        linkColor={(link: any) => {
+          const sourceId = typeof link.source === 'object' ? link.source.id : link.source;
+          const targetId = typeof link.target === 'object' ? link.target.id : link.target;
+          const linkId1 = `${sourceId}-${targetId}`;
+          const linkId2 = `${targetId}-${sourceId}`;
+          return highlightLinks.has(linkId1) || highlightLinks.has(linkId2) ? '#ff6b6b' : '#999';
+        }}
+        linkWidth={(link: any) => {
+          const sourceId = typeof link.source === 'object' ? link.source.id : link.source;
+          const targetId = typeof link.target === 'object' ? link.target.id : link.target;
+          const linkId1 = `${sourceId}-${targetId}`;
+          const linkId2 = `${targetId}-${sourceId}`;
+          return highlightLinks.has(linkId1) || highlightLinks.has(linkId2) ? 3 : 1.5;
+        }}
         onNodeClick={handleNodeClick}
         nodeCanvasObject={(node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
           const label = node.label;
-          const fontSize = 12 / globalScale;
-          ctx.font = `${fontSize}px Sans-Serif`;
-          const textWidth = ctx.measureText(label).width;
-          const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.5);
+          const isSelected = selectedNode === node.id;
+          const isHighlighted = highlightNodes.has(node.id);
 
-          // Draw node circle
+          // Enlarge selected and highlighted nodes
+          const sizeMultiplier = isSelected || isHighlighted ? 1.5 : 1;
+          const fontSize = (11 / globalScale) * sizeMultiplier;
+          ctx.font = `${isSelected || isHighlighted ? 'bold ' : ''}${fontSize}px Sans-Serif`;
+          const textWidth = ctx.measureText(label).width;
+
+          // Calculate bubble size
+          const padding = fontSize * 1.2;
+          const bubbleWidth = textWidth + padding * 2;
+          const bubbleHeight = fontSize + padding * 1.5;
+          const bubbleRadius = bubbleHeight / 2;
+
+          // Draw bubble
           ctx.beginPath();
-          ctx.arc(node.x, node.y, 5, 0, 2 * Math.PI, false);
+          ctx.moveTo(node.x - bubbleWidth / 2 + bubbleRadius, node.y - bubbleHeight / 2);
+          ctx.lineTo(node.x + bubbleWidth / 2 - bubbleRadius, node.y - bubbleHeight / 2);
+          ctx.quadraticCurveTo(node.x + bubbleWidth / 2, node.y - bubbleHeight / 2, node.x + bubbleWidth / 2, node.y - bubbleHeight / 2 + bubbleRadius);
+          ctx.lineTo(node.x + bubbleWidth / 2, node.y + bubbleHeight / 2 - bubbleRadius);
+          ctx.quadraticCurveTo(node.x + bubbleWidth / 2, node.y + bubbleHeight / 2, node.x + bubbleWidth / 2 - bubbleRadius, node.y + bubbleHeight / 2);
+          ctx.lineTo(node.x - bubbleWidth / 2 + bubbleRadius, node.y + bubbleHeight / 2);
+          ctx.quadraticCurveTo(node.x - bubbleWidth / 2, node.y + bubbleHeight / 2, node.x - bubbleWidth / 2, node.y + bubbleHeight / 2 - bubbleRadius);
+          ctx.lineTo(node.x - bubbleWidth / 2, node.y - bubbleHeight / 2 + bubbleRadius);
+          ctx.quadraticCurveTo(node.x - bubbleWidth / 2, node.y - bubbleHeight / 2, node.x - bubbleWidth / 2 + bubbleRadius, node.y - bubbleHeight / 2);
+          ctx.closePath();
+
           ctx.fillStyle = node.color || '#4A90E2';
           ctx.fill();
-
-          // Draw label background
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-          ctx.fillRect(
-            node.x - bckgDimensions[0] / 2,
-            node.y - bckgDimensions[1] / 2 + 8,
-            bckgDimensions[0],
-            bckgDimensions[1]
-          );
 
           // Draw label text
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillStyle = '#333';
-          ctx.fillText(label, node.x, node.y + 8 + fontSize * 0.25);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillText(label, node.x, node.y);
         }}
-        cooldownTicks={100}
-        onEngineStop={() => {}}
+        enableNodeDrag={true}
+        d3AlphaDecay={0.01}
+        d3VelocityDecay={0.4}
+        warmupTicks={50}
+        cooldownTime={15000}
       />
     </div>
   );

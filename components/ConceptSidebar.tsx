@@ -80,7 +80,10 @@ export default function ConceptSidebar({
           {filteredConcepts.map((concept, index) => (
             <li key={index}>
               <button
-                onClick={() => onConceptClick(concept)}
+                onClick={() => {
+                  onConceptClick(concept);
+                  setSearchQuery(''); // Clear search after clicking a concept
+                }}
                 className={`w-full text-left px-3 py-2 rounded transition-colors ${
                   selectedConcept?.label === concept.label
                     ? 'bg-blue-100 text-blue-900 font-semibold'
