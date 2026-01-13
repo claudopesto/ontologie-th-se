@@ -72,10 +72,10 @@ export default function Home() {
         <h1 className="text-lg md:text-2xl font-bold text-white">Recherches universitaires d&apos;Elsa Novelli</h1>
       </header>
 
-      {/* Main Content Area - Three Column Layout */}
-      <div className="flex flex-1 overflow-hidden m-2 md:m-4 gap-2 md:gap-4">
-        {/* Left: Menu/Filters */}
-        <div className="w-80 border border-gray-300 rounded-xl overflow-y-auto shadow-sm">
+      {/* Main Content Area - Responsive Layout */}
+      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden m-2 md:m-4 gap-2 md:gap-4">
+        {/* Top/Left: Menu/Filters */}
+        <div className="w-full lg:w-80 h-auto lg:h-full border border-gray-300 rounded-xl overflow-y-auto shadow-sm">
           <ConceptSidebar
             concepts={filteredConcepts}
             selectedConcept={selectedConcept}
@@ -86,7 +86,7 @@ export default function Home() {
         </div>
 
         {/* Center: Graph Visualization */}
-        <div className="flex-1 border border-gray-300 rounded-xl overflow-hidden shadow-sm">
+        <div className="flex-1 h-[50vh] lg:h-full border border-gray-300 rounded-xl overflow-hidden shadow-sm">
           <OntologyGraph
             concepts={concepts}
             onNodeClick={setSelectedConcept}
@@ -94,8 +94,8 @@ export default function Home() {
           />
         </div>
 
-        {/* Right: Concept Definition */}
-        <div className="w-96 overflow-y-auto border border-gray-300 rounded-xl shadow-sm">
+        {/* Right/Bottom: Concept Definition */}
+        <div className="w-full lg:w-96 h-auto lg:h-full overflow-y-auto border border-gray-300 rounded-xl shadow-sm">
           <ConceptDetail concept={selectedConcept} />
         </div>
       </div>
