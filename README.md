@@ -29,10 +29,18 @@ Les données sont hébergées sur Google Sheets et incluent :
 ## Installation
 
 ```bash
-# Installer les dépendances
+# 1. Installer les dépendances
 npm install
 
-# Lancer le serveur de développement
+# 2. Configurer les variables d'environnement
+# Copiez le fichier .env.example en .env.local
+cp .env.example .env.local
+
+# 3. Éditez .env.local et ajoutez vos clés Google Sheets
+# NEXT_PUBLIC_GOOGLE_SHEETS_SPREADSHEET_ID=votre_id_spreadsheet
+# NEXT_PUBLIC_GOOGLE_SHEETS_API_KEY=votre_clé_api
+
+# 4. Lancer le serveur de développement
 npm run dev
 ```
 
@@ -48,7 +56,14 @@ Ouvrir [http://localhost:3000](http://localhost:3000) dans votre navigateur.
 
 ## Configuration
 
-La clé API Google Sheets et l'ID du spreadsheet sont configurés dans [lib/googleSheets.ts](lib/googleSheets.ts).
+### Variables d'environnement
+
+Les variables d'environnement nécessaires sont définies dans le fichier `.env.local` :
+
+- `NEXT_PUBLIC_GOOGLE_SHEETS_SPREADSHEET_ID` : L'ID de votre Google Spreadsheet
+- `NEXT_PUBLIC_GOOGLE_SHEETS_API_KEY` : Votre clé API Google Sheets
+
+Un fichier `.env.example` est fourni comme modèle.
 
 ## Développement
 
@@ -65,9 +80,35 @@ npm start
 
 ## Déploiement
 
-L'application peut être déployée sur Vercel, Netlify, ou tout autre service supportant Next.js.
+### Déploiement sur Vercel avec GitHub
 
-Pour Vercel :
+1. **Pousser votre code sur GitHub** :
+```bash
+git add .
+git commit -m "Update: Configure environment variables"
+git remote add origin https://github.com/VOTRE-USERNAME/ontologie-these.git
+git push -u origin main
+```
+
+2. **Connecter à Vercel** :
+   - Allez sur [vercel.com](https://vercel.com)
+   - Connectez-vous avec GitHub
+   - Cliquez sur "Add New Project"
+   - Importez votre dépôt GitHub
+
+3. **Configurer les variables d'environnement sur Vercel** :
+   - Dans les paramètres du projet sur Vercel
+   - Allez dans "Settings" > "Environment Variables"
+   - Ajoutez les variables suivantes :
+     - `NEXT_PUBLIC_GOOGLE_SHEETS_SPREADSHEET_ID`
+     - `NEXT_PUBLIC_GOOGLE_SHEETS_API_KEY`
+
+4. **Déployer** :
+   - Cliquez sur "Deploy"
+   - Vercel construira et déploiera automatiquement votre application
+
+### Déploiement local avec Vercel CLI
+
 ```bash
 npm install -g vercel
 vercel

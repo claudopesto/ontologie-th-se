@@ -1,7 +1,7 @@
 import { Concept } from '@/types/ontology';
 
-const SPREADSHEET_ID = '1N-6a1jDlqqxrn_jNYVw-f98BsgqcCCPnCOCnwNUxEGw';
-const API_KEY = 'AIzaSyD2_SJ8M1hpmVyUVjMqevk9IG-iMrEbmgk';
+const SPREADSHEET_ID = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_SPREADSHEET_ID;
+const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_API_KEY;
 const RANGE = 'concepts!A:J'; // Nom de la feuille: concepts
 
 export async function fetchConceptsFromSheet(): Promise<Concept[]> {
