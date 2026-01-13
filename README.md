@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ontologie de Thèse - Elsa Novelli
 
-## Getting Started
+Application Next.js pour visualiser et explorer l'ontologie de thèse d'Elsa Novelli avec une interface interactive inspirée de Wikipedia.
 
-First, run the development server:
+## Fonctionnalités
+
+- **Visualisation graphique interactive** : Représentation visuelle des concepts sous forme de graphe interactif
+- **Menu latéral** : Liste complète des concepts avec navigation facile
+- **Affichage détaillé** : Définitions, auteurs et citations pour chaque concept
+- **Données en temps réel** : Connexion directe avec Google Sheets pour des mises à jour dynamiques
+
+## Structure de l'application
+
+- **En-tête** : Titre de la thèse
+- **Panneau gauche** : Visualisation graphique interactive de l'ontologie
+- **Panneau droit** : Liste des concepts cliquables
+- **Panneau bas** : Affichage détaillé du concept sélectionné
+
+## Données
+
+Les données sont hébergées sur Google Sheets et incluent :
+- **Colonne B** : Label (nom du concept)
+- **Colonne D** : Définition du concept
+- **Colonne E** : Auteur 1
+- **Colonne G** : Citation de l'auteur 1
+- **Colonne H** : Auteur 2
+- **Colonne J** : Citation de l'auteur 2
+
+## Installation
 
 ```bash
+# Installer les dépendances
+npm install
+
+# Lancer le serveur de développement
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000) dans votre navigateur.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Technologies utilisées
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Next.js 16** avec App Router
+- **TypeScript** pour la sécurité des types
+- **Tailwind CSS** pour le styling
+- **react-force-graph-2d** pour la visualisation graphique
+- **Google Sheets API** pour les données
 
-## Learn More
+## Configuration
 
-To learn more about Next.js, take a look at the following resources:
+La clé API Google Sheets et l'ID du spreadsheet sont configurés dans [lib/googleSheets.ts](lib/googleSheets.ts).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Développement
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Lancer en mode développement
+npm run dev
 
-## Deploy on Vercel
+# Créer une version de production
+npm run build
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Démarrer la version de production
+npm start
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Déploiement
+
+L'application peut être déployée sur Vercel, Netlify, ou tout autre service supportant Next.js.
+
+Pour Vercel :
+```bash
+npm install -g vercel
+vercel
+```
