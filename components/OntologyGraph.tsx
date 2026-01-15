@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { Concept, GraphData } from '@/types/ontology';
+import * as d3Force from 'd3-force';
 
 interface OntologyGraphProps {
   concepts: Concept[];
@@ -232,11 +233,31 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
         height={dimensions.height}
         nodeLabel="label"
         nodeColor="color"
-        nodePointerAreaPaint={(node: any, color: string, ctx: CanvasRenderingContext2D) => {
-          // Simple large clickable area
+        nodePointerAreaPaint={(node: any, color: string, ctx: CanvasRenderingContext2D, globalScale: number) => {
+          // Extended clickable area including circle and text
+          const fontSize = 11 / globalScale;
+          ctx.font = `${fontSize}px Sans-Serif`;
+          const textWidth = ctx.measureText(node.label).width;
+          
+          const circleRadius = 10 / globalScale;
+          const padding = fontSize * 0.3;
+          const bubbleWidth = textWidth + padding * 2;
+          const bubbleHeight = fontSize + padding;
+          const textPadding = circleRadius + (8 / globalScale);
+          
+          // Create a larger clickable area that covers both circle and text
+          const totalWidth = textPadding + bubbleWidth;
+          const totalHeight = Math.max(circleRadius * 2, bubbleHeight);
+          
           ctx.fillStyle = color;
           ctx.beginPath();
-          ctx.arc(node.x, node.y, 40, 0, 2 * Math.PI, false);
+          ctx.roundRect(
+            node.x - circleRadius, 
+            node.y - totalHeight / 2, 
+            totalWidth, 
+            totalHeight, 
+            4 / globalScale
+          );
           ctx.fill();
         }}
         linkColor={(link: any) => {
@@ -265,44 +286,63 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
           ctx.font = `${isSelected || isHighlighted ? 'bold ' : ''}${fontSize}px Sans-Serif`;
           const textWidth = ctx.measureText(label).width;
 
-          // Calculate bubble size
-          const padding = fontSize * 1.2;
-          const bubbleWidth = textWidth + padding * 2;
-          const bubbleHeight = fontSize + padding * 1.5;
-          const bubbleRadius = bubbleHeight / 2;
-
-          // Draw bubble
+          // Calculate circle size
+          const circleRadius = (10 * sizeMultiplier) / globalScale;
+          
+          // Draw circle
           ctx.beginPath();
-          ctx.moveTo(node.x - bubbleWidth / 2 + bubbleRadius, node.y - bubbleHeight / 2);
-          ctx.lineTo(node.x + bubbleWidth / 2 - bubbleRadius, node.y - bubbleHeight / 2);
-          ctx.quadraticCurveTo(node.x + bubbleWidth / 2, node.y - bubbleHeight / 2, node.x + bubbleWidth / 2, node.y - bubbleHeight / 2 + bubbleRadius);
-          ctx.lineTo(node.x + bubbleWidth / 2, node.y + bubbleHeight / 2 - bubbleRadius);
-          ctx.quadraticCurveTo(node.x + bubbleWidth / 2, node.y + bubbleHeight / 2, node.x + bubbleWidth / 2 - bubbleRadius, node.y + bubbleHeight / 2);
-          ctx.lineTo(node.x - bubbleWidth / 2 + bubbleRadius, node.y + bubbleHeight / 2);
-          ctx.quadraticCurveTo(node.x - bubbleWidth / 2, node.y + bubbleHeight / 2, node.x - bubbleWidth / 2, node.y + bubbleHeight / 2 - bubbleRadius);
-          ctx.lineTo(node.x - bubbleWidth / 2, node.y - bubbleHeight / 2 + bubbleRadius);
-          ctx.quadraticCurveTo(node.x - bubbleWidth / 2, node.y - bubbleHeight / 2, node.x - bubbleWidth / 2 + bubbleRadius, node.y - bubbleHeight / 2);
-          ctx.closePath();
-
+          ctx.arc(node.x, node.y, circleRadius, 0, 2 * Math.PI);
           ctx.fillStyle = node.color || '#4A90E2';
           ctx.fill();
+          ctx.strokeStyle = isSelected || isHighlighted ? '#000' : '#fff';
+          ctx.lineWidth = 2 / globalScale;
+          ctx.stroke();
+
+          // Calculate text position (to the right of the circle)
+          const textPadding = circleRadius + (8 / globalScale);
+          const textX = node.x + textPadding;
+          
+          // Draw text background bubble for better readability
+          const padding = fontSize * 0.3;
+          const bubbleWidth = textWidth + padding * 2;
+          const bubbleHeight = fontSize + padding;
+          
+          ctx.beginPath();
+          ctx.roundRect(
+            textX - padding, 
+            node.y - bubbleHeight / 2, 
+            bubbleWidth, 
+            bubbleHeight, 
+            4 / globalScale
+          );
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+          ctx.lineWidth = 1 / globalScale;
+          ctx.stroke();
 
           // Draw label text
-          ctx.textAlign = 'center';
+          ctx.textAlign = 'left';
           ctx.textBaseline = 'middle';
-          ctx.fillStyle = '#ffffff';
-          ctx.fillText(label, node.x, node.y);
+          ctx.fillStyle = '#333';
+          ctx.fillText(label, textX, node.y);
         }}
         enableNodeDrag={true}
-        d3AlphaDecay={0.01}
-        d3VelocityDecay={0.4}
-        warmupTicks={50}
-        cooldownTime={15000}
+        d3AlphaDecay={0.005}
+        d3VelocityDecay={0.2}
+        warmupTicks={100}
+        cooldownTime={10000}
         nodeRelSize={8}
         d3Force={(forces: any) => {
-          forces.charge.strength(-400);
-          forces.center.x(dimensions.width / 2);
-          forces.center.y(dimensions.height / 2);
+          forces.charge.strength(-600);
+          forces.center.x(dimensions.width / 2).strength(0.05);
+          forces.center.y(dimensions.height / 2).strength(0.05);
+          // Add some link force for better connectivity
+          if (forces.link) {
+            forces.link.distance(100).strength(0.8);
+          }
+          // Add collision force to prevent overlapping
+          forces.collision = d3Force.forceCollide().radius(50);
           return forces;
         }}
       />
