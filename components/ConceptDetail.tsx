@@ -3,9 +3,11 @@ import { Concept } from '@/types/ontology';
 interface ConceptDetailProps {
   concept: Concept | null;
   onReturnToGraph?: () => void;
+  concepts?: Concept[];
+  onConceptClick?: (concept: Concept) => void;
 }
 
-export default function ConceptDetail({ concept, onReturnToGraph }: ConceptDetailProps) {
+export default function ConceptDetail({ concept, onReturnToGraph, concepts = [], onConceptClick }: ConceptDetailProps) {
   if (!concept) {
     return (
       <div className="p-4 sm:p-6 bg-white border-t border-gray-300 h-full flex items-center justify-center">
@@ -32,7 +34,55 @@ export default function ConceptDetail({ concept, onReturnToGraph }: ConceptDetai
     return null;
   };
 
+  // Get related concepts from the relations field
+  const getRelatedConcepts = () => {
+    if (!concept.relations || !concept.relations.trim()) {
+      console.log(`No relations found for concept: ${concept.label}`);
+      return [];
+    }
+
+    console.log(`Getting related concepts for: ${concept.label}`);
+    console.log(`Relations string: "${concept.relations}"`);
+
+    const relatedLabels = concept.relations
+      .split(';')
+      .map(label => label.trim())
+      .filter(label => label);
+
+    console.log(`Related labels found:`, relatedLabels);
+
+    // Find the actual concept objects for these labels using case-insensitive matching
+    const relatedConcepts = relatedLabels
+      .map(label => {
+        // Try exact match first
+        let found = concepts.find(c => c.label === label);
+        
+        // If not found, try case-insensitive match
+        if (!found) {
+          found = concepts.find(c => c.label.toLowerCase() === label.toLowerCase());
+        }
+        
+        // If still not found, try partial match (contains)
+        if (!found) {
+          found = concepts.find(c => c.label.toLowerCase().includes(label.toLowerCase()) || label.toLowerCase().includes(c.label.toLowerCase()));
+        }
+        
+        if (!found) {
+          console.log(`Could not find concept for label: "${label}"`);
+        } else {
+          console.log(`Found concept for label "${label}": ${found.label}`);
+        }
+        
+        return found;
+      })
+      .filter(c => c !== undefined) as Concept[];
+
+    console.log(`Final related concepts:`, relatedConcepts.map(c => c.label));
+    return relatedConcepts;
+  };
+
   const hypothesis = getHypothesis();
+  const relatedConcepts = getRelatedConcepts();
 
   return (
     <div className="p-4 sm:p-6 bg-white border-t border-gray-300 h-full overflow-y-auto">
@@ -109,6 +159,39 @@ export default function ConceptDetail({ concept, onReturnToGraph }: ConceptDetai
               &ldquo;{concept.citation_auteur2}&rdquo;
             </blockquote>
           )}
+        </div>
+      )}
+
+      {/* Debug info for relations */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs">
+          <strong>Debug - Relations:</strong> "{concept.relations || 'aucune'}"
+          <br />
+          <strong>Related concepts found:</strong> {relatedConcepts.length}
+        </div>
+      )}
+
+      {/* Related Concepts Section */}
+      {relatedConcepts.length > 0 && (
+        <div className="mb-6">
+          <h3 className="text-base sm:text-lg font-semibold mb-3 text-gray-800">
+            Concepts en relation
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {relatedConcepts.map((relatedConcept) => (
+              <button
+                key={relatedConcept.label}
+                onClick={() => onConceptClick && onConceptClick(relatedConcept)}
+                className="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors duration-200 border border-blue-300 hover:border-blue-400"
+              >
+                <span className="mr-1">🔗</span>
+                {relatedConcept.label}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            Cliquez sur un concept pour voir sa définition
+          </p>
         </div>
       )}
 

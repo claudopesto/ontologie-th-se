@@ -66,6 +66,10 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
 
   // Generate graph data from concepts with useMemo to avoid recreating on every render
   const graphData: GraphData = useMemo(() => {
+    console.log('OntologyGraph: Total concepts received:', concepts.length);
+    console.log('OntologyGraph: Selected filter:', selectedFilter);
+    console.log('OntologyGraph: Selected category:', selectedCategory);
+    
     // Filter concepts based on selected filter and category
     const filteredConcepts = concepts.filter(concept => {
       // Apply travaux filter
@@ -90,6 +94,9 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
 
       return passesTravauxFilter && passesCategoryFilter;
     });
+
+    console.log('OntologyGraph: Filtered concepts count:', filteredConcepts.length);
+    console.log('OntologyGraph: First filtered concept:', filteredConcepts[0]);
 
     const data: GraphData = {
       nodes: filteredConcepts.map((concept) => ({

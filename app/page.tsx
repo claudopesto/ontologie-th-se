@@ -23,12 +23,15 @@ export default function Home() {
     async function loadConcepts() {
       try {
         setLoading(true);
+        console.log('Starting to fetch concepts...');
         const data = await fetchConceptsFromSheet();
+        console.log('Concepts received in Home component:', data.length);
+        console.log('First concept in Home component:', data[0]);
         setConcepts(data);
         setError(null);
       } catch (err) {
         setError('Erreur lors du chargement des données');
-        console.error(err);
+        console.error('Error loading concepts:', err);
       } finally {
         setLoading(false);
       }
@@ -131,6 +134,14 @@ export default function Home() {
 
       {/* Desktop Layout - Side by side */}
       <div className="hidden lg:flex flex-1 overflow-hidden m-4 gap-4">
+        {/* Debug info - temporary */}
+        <div className="absolute top-20 left-4 bg-yellow-100 p-2 text-xs z-50 rounded">
+          <div>Concepts: {concepts.length}</div>
+          <div>Filtered: {filteredConcepts.length}</div>
+          <div>Filter: {selectedFilter}</div>
+          <div>Category: {selectedCategory}</div>
+        </div>
+        
         {/* Left: Menu/Filters */}
         <div className="w-80 h-full border border-gray-300 rounded-xl overflow-y-auto shadow-sm">
           <ConceptSidebar
@@ -158,7 +169,9 @@ export default function Home() {
         <div className="w-96 h-full overflow-y-auto border border-gray-300 rounded-xl shadow-sm">
           <ConceptDetail 
             concept={selectedConcept}
-            onReturnToGraph={() => setMobileActiveTab('graph')} 
+            onReturnToGraph={() => setMobileActiveTab('graph')}
+            concepts={concepts}
+            onConceptClick={setSelectedConcept}
           />
         </div>
       </div>
@@ -203,7 +216,9 @@ export default function Home() {
           <div className="flex-1 overflow-y-auto">
             <ConceptDetail 
               concept={selectedConcept} 
-              onReturnToGraph={() => setMobileActiveTab('graph')} 
+              onReturnToGraph={() => setMobileActiveTab('graph')}
+              concepts={concepts}
+              onConceptClick={setSelectedConcept}
             />
           </div>
         </div>

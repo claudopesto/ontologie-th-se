@@ -6,18 +6,31 @@ const RANGE = 'concepts!A:N'; // Nom de la feuille: concepts (A to N includes hy
 
 export async function fetchConceptsFromSheet(): Promise<Concept[]> {
   try {
+    console.log('Fetching concepts from Google Sheets...');
+    console.log('SPREADSHEET_ID:', SPREADSHEET_ID);
+    console.log('API_KEY:', API_KEY ? `${API_KEY.substring(0, 8)}...` : 'undefined');
+    console.log('RANGE:', RANGE);
+    
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+    console.log('URL:', url);
 
     const response = await fetch(url);
+    console.log('Response status:', response.status);
+    console.log('Response ok:', response.ok);
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch data: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('Error response:', errorText);
+      throw new Error(`Failed to fetch data: ${response.statusText} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('Data received:', data);
     const rows = data.values;
+    console.log('Rows count:', rows ? rows.length : 0);
 
     if (!rows || rows.length === 0) {
+      console.log('No rows found');
       return [];
     }
 
@@ -38,6 +51,8 @@ export async function fetchConceptsFromSheet(): Promise<Concept[]> {
       hypothese_ciens: row[13] || '', // Column N (index 13)
     })).filter((concept: Concept) => concept.label); // Filter out empty rows
 
+    console.log('Concepts parsed:', concepts.length);
+    console.log('First concept:', concepts[0]);
     return concepts;
   } catch (error) {
     console.error('Error fetching concepts:', error);
