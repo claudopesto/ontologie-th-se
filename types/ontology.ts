@@ -10,6 +10,8 @@ export interface Concept {
   citation_auteur2: string;
   relations: string;
   categorie: string;
+  hypothese_these: string;
+  hypothese_ciens: string;
 }
 
 export interface GraphNode {

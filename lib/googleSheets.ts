@@ -2,7 +2,7 @@ import { Concept } from '@/types/ontology';
 
 const SPREADSHEET_ID = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_SPREADSHEET_ID;
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_API_KEY;
-const RANGE = 'concepts!A:L'; // Nom de la feuille: concepts (A to L includes category)
+const RANGE = 'concepts!A:N'; // Nom de la feuille: concepts (A to N includes hypotheses)
 
 export async function fetchConceptsFromSheet(): Promise<Concept[]> {
   try {
@@ -34,6 +34,8 @@ export async function fetchConceptsFromSheet(): Promise<Concept[]> {
       citation_auteur2: row[9] || '', // Column J (index 9)
       relations: row[10] || '', // Column K (index 10)
       categorie: row[11] || '', // Column L (index 11)
+      hypothese_these: row[12] || '', // Column M (index 12)
+      hypothese_ciens: row[13] || '', // Column N (index 13)
     })).filter((concept: Concept) => concept.label); // Filter out empty rows
 
     return concepts;
