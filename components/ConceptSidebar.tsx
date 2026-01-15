@@ -23,6 +23,7 @@ export default function ConceptSidebar({
   onCategoryChange
 }: ConceptSidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
   // Get unique categories for filter buttons
   const categories = Array.from(new Set(concepts.map(concept => concept.categorie).filter(cat => cat.trim())));
@@ -46,59 +47,78 @@ export default function ConceptSidebar({
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
         />
 
-        {/* Filter Options - Travaux */}
+        {/* Filter Buttons - Travaux */}
         <div className="mb-3">
           <h3 className="text-sm font-semibold text-white mb-2">Travaux</h3>
-          <div className="space-y-1">
+          <div className="flex flex-wrap gap-2">
             {[
-              { value: 'all', label: 'Tous les travaux' },
+              { value: 'all', label: 'Tous' },
               { value: 'Thèse', label: 'Thèse' },
               { value: 'CIENS', label: 'CIENS' }
             ].map((option) => (
-              <label key={option.value} className="flex items-center space-x-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="travaux-filter"
-                  value={option.value}
-                  checked={selectedFilter === option.value}
-                  onChange={(e) => onFilterChange(e.target.value)}
-                  className="text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-sm text-white">{option.label}</span>
-              </label>
+              <button
+                key={option.value}
+                onClick={() => onFilterChange(option.value)}
+                className={`px-3 py-1 text-xs rounded-full font-medium transition-colors ${
+                  selectedFilter === option.value
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {option.label}
+              </button>
             ))}
           </div>
         </div>
 
-        {/* Filter Options - Catégories */}
+        {/* Custom Dropdown - Catégories */}
         {categories.length > 0 && (
           <div>
             <h3 className="text-sm font-semibold text-white mb-2">Catégories</h3>
-            <div className="space-y-1 max-h-32 overflow-y-auto">
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="category-filter"
-                  value="all"
-                  checked={selectedCategory === 'all'}
-                  onChange={(e) => onCategoryChange(e.target.value)}
-                  className="text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-sm text-white">Toutes les catégories</span>
-              </label>
-              {categories.map((category) => (
-                <label key={category} className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="category-filter"
-                    value={category}
-                    checked={selectedCategory === category}
-                    onChange={(e) => onCategoryChange(e.target.value)}
-                    className="text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-white">{category}</span>
-                </label>
-              ))}
+            <div className="relative">
+              <button
+                onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900 text-left flex justify-between items-center"
+              >
+                <span>{selectedCategory === 'all' ? 'Toutes les catégories' : selectedCategory}</span>
+                <svg 
+                  className={`w-4 h-4 transition-transform ${isCategoryDropdownOpen ? 'rotate-180' : ''}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {isCategoryDropdownOpen && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-48 overflow-y-auto">
+                  <button
+                    onClick={() => {
+                      onCategoryChange('all');
+                      // Keep dropdown open
+                    }}
+                    className={`w-full px-3 py-2 text-left hover:bg-gray-100 ${
+                      selectedCategory === 'all' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-900'
+                    }`}
+                  >
+                    Toutes les catégories
+                  </button>
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => {
+                        onCategoryChange(category);
+                        // Keep dropdown open
+                      }}
+                      className={`w-full px-3 py-2 text-left hover:bg-gray-100 ${
+                        selectedCategory === category ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-900'
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
