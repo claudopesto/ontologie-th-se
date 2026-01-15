@@ -66,9 +66,6 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
 
   // Generate graph data from concepts with useMemo to avoid recreating on every render
   const graphData: GraphData = useMemo(() => {
-    console.log('OntologyGraph: Total concepts received:', concepts.length);
-    console.log('OntologyGraph: Selected filter:', selectedFilter);
-    console.log('OntologyGraph: Selected category:', selectedCategory);
     
     // Filter concepts based on selected filter and category
     const filteredConcepts = concepts.filter(concept => {
@@ -95,9 +92,6 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
       return passesTravauxFilter && passesCategoryFilter;
     });
 
-    console.log('OntologyGraph: Filtered concepts count:', filteredConcepts.length);
-    console.log('OntologyGraph: First filtered concept:', filteredConcepts[0]);
-
     const data: GraphData = {
       nodes: filteredConcepts.map((concept) => ({
         id: concept.label,
@@ -119,8 +113,6 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
           .map(r => r.trim())
           .filter(r => r); // Remove empty strings
 
-        console.log(`Concept "${concept.label}" has relations:`, relatedConcepts);
-
         // Create a link for each related concept
         relatedConcepts.forEach((targetLabel) => {
           // Check if both source and target exist in our filtered nodes
@@ -137,15 +129,11 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
                 target: targetLabel,
               });
               addedLinks.add(linkId);
-              console.log(`Created link: ${concept.label} -> ${targetLabel}`);
             }
           }
         });
       }
     });
-
-    console.log('Total links created:', data.links.length);
-    console.log('Links:', data.links);
 
     return data;
   }, [concepts, selectedFilter, selectedCategory]);
@@ -310,6 +298,13 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
         d3VelocityDecay={0.4}
         warmupTicks={50}
         cooldownTime={15000}
+        nodeRelSize={8}
+        d3Force={(forces: any) => {
+          forces.charge.strength(-400);
+          forces.center.x(dimensions.width / 2);
+          forces.center.y(dimensions.height / 2);
+          return forces;
+        }}
       />
     </div>
   );

@@ -37,19 +37,13 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
   // Get related concepts from the relations field
   const getRelatedConcepts = () => {
     if (!concept.relations || !concept.relations.trim()) {
-      console.log(`No relations found for concept: ${concept.label}`);
       return [];
     }
-
-    console.log(`Getting related concepts for: ${concept.label}`);
-    console.log(`Relations string: "${concept.relations}"`);
 
     const relatedLabels = concept.relations
       .split(';')
       .map(label => label.trim())
       .filter(label => label);
-
-    console.log(`Related labels found:`, relatedLabels);
 
     // Find the actual concept objects for these labels using case-insensitive matching
     const relatedConcepts = relatedLabels
@@ -67,17 +61,10 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
           found = concepts.find(c => c.label.toLowerCase().includes(label.toLowerCase()) || label.toLowerCase().includes(c.label.toLowerCase()));
         }
         
-        if (!found) {
-          console.log(`Could not find concept for label: "${label}"`);
-        } else {
-          console.log(`Found concept for label "${label}": ${found.label}`);
-        }
-        
         return found;
       })
       .filter(c => c !== undefined) as Concept[];
 
-    console.log(`Final related concepts:`, relatedConcepts.map(c => c.label));
     return relatedConcepts;
   };
 
