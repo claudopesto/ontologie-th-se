@@ -46,41 +46,24 @@ export default function ConceptSidebar({
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
         />
 
-        {/* Filter Buttons - Travaux */}
-        <div className="flex gap-2 mb-3">
-          <button
-            onClick={() => onFilterChange('all')}
-            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-              selectedFilter === 'all'
-                ? 'bg-white text-gray-900'
-                : 'bg-white/20 text-white hover:bg-white/30'
-            }`}
+        {/* Filter Dropdown - Travaux */}
+        <div className="mb-3">
+          <label htmlFor="travaux-select" className="block text-sm font-semibold text-white mb-2">
+            Travaux
+          </label>
+          <select
+            id="travaux-select"
+            value={selectedFilter}
+            onChange={(e) => onFilterChange(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
           >
-            Tous
-          </button>
-          <button
-            onClick={() => onFilterChange('Thèse')}
-            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-              selectedFilter === 'Thèse'
-                ? 'bg-white text-gray-900'
-                : 'bg-white/20 text-white hover:bg-white/30'
-            }`}
-          >
-            Thèse
-          </button>
-          <button
-            onClick={() => onFilterChange('CIENS')}
-            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-              selectedFilter === 'CIENS'
-                ? 'bg-white text-gray-900'
-                : 'bg-white/20 text-white hover:bg-white/30'
-            }`}
-          >
-            CIENS
-          </button>
+            <option value="all">Tous les travaux</option>
+            <option value="Thèse">Thèse</option>
+            <option value="CIENS">CIENS</option>
+          </select>
         </div>
 
-        {/* Filter Buttons - Catégories */}
+        {/* Filter Dropdown - Catégories */}
         {categories.length > 0 && (
           <div>
             <label htmlFor="category-select" className="block text-sm font-semibold text-white mb-2">
