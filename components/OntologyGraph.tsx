@@ -261,46 +261,55 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
 
           // Enlarge selected and highlighted nodes
           const sizeMultiplier = isSelected || isHighlighted ? 1.5 : 1;
-          const fontSize = (11 / globalScale) * sizeMultiplier;
+          const fontSize = (10 / globalScale) * sizeMultiplier;
           ctx.font = `${isSelected || isHighlighted ? 'bold ' : ''}${fontSize}px Sans-Serif`;
           const textWidth = ctx.measureText(label).width;
 
-          // Calculate bubble size
-          const padding = fontSize * 1.2;
-          const bubbleWidth = textWidth + padding * 2;
-          const bubbleHeight = fontSize + padding * 1.5;
-          const bubbleRadius = bubbleHeight / 2;
+          // Calculate circular bubble radius based on text
+          const baseRadius = 15;
+          const radius = baseRadius * sizeMultiplier;
 
-          // Draw bubble
+          // Draw circular bubble
           ctx.beginPath();
-          ctx.moveTo(node.x - bubbleWidth / 2 + bubbleRadius, node.y - bubbleHeight / 2);
-          ctx.lineTo(node.x + bubbleWidth / 2 - bubbleRadius, node.y - bubbleHeight / 2);
-          ctx.quadraticCurveTo(node.x + bubbleWidth / 2, node.y - bubbleHeight / 2, node.x + bubbleWidth / 2, node.y - bubbleHeight / 2 + bubbleRadius);
-          ctx.lineTo(node.x + bubbleWidth / 2, node.y + bubbleHeight / 2 - bubbleRadius);
-          ctx.quadraticCurveTo(node.x + bubbleWidth / 2, node.y + bubbleHeight / 2, node.x + bubbleWidth / 2 - bubbleRadius, node.y + bubbleHeight / 2);
-          ctx.lineTo(node.x - bubbleWidth / 2 + bubbleRadius, node.y + bubbleHeight / 2);
-          ctx.quadraticCurveTo(node.x - bubbleWidth / 2, node.y + bubbleHeight / 2, node.x - bubbleWidth / 2, node.y + bubbleHeight / 2 - bubbleRadius);
-          ctx.lineTo(node.x - bubbleWidth / 2, node.y - bubbleHeight / 2 + bubbleRadius);
-          ctx.quadraticCurveTo(node.x - bubbleWidth / 2, node.y - bubbleHeight / 2, node.x - bubbleWidth / 2 + bubbleRadius, node.y - bubbleHeight / 2);
-          ctx.closePath();
-
+          ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI, false);
           ctx.fillStyle = node.color || '#4A90E2';
           ctx.fill();
 
-          // Draw label text
+          // Add a subtle border for better visibility
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Draw label text below the bubble
+          const textOffset = radius + fontSize / 2 + 4;
           ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillStyle = '#ffffff';
-          ctx.fillText(label, node.x, node.y);
+          ctx.textBaseline = 'top';
+          
+          // Add text background for better readability
+          const textPadding = 4;
+          const textBoxWidth = textWidth + textPadding * 2;
+          const textBoxHeight = fontSize + textPadding * 2;
+          
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          ctx.fillRect(
+            node.x - textBoxWidth / 2,
+            node.y + textOffset - textPadding,
+            textBoxWidth,
+            textBoxHeight
+          );
+          
+          // Draw the text
+          ctx.fillStyle = '#333333';
+          ctx.fillText(label, node.x, node.y + textOffset);
         }}
         enableNodeDrag={true}
-        d3AlphaDecay={0.01}
-        d3VelocityDecay={0.4}
-        warmupTicks={50}
-        cooldownTime={15000}
+        d3AlphaDecay={0.005}
+        d3VelocityDecay={0.3}
+        warmupTicks={100}
+        cooldownTime={30000}
         nodeRelSize={8}
         d3Force={(forces: any) => {
-          forces.charge.strength(-400);
+          forces.charge.strength(-300);
           forces.center.x(dimensions.width / 2);
           forces.center.y(dimensions.height / 2);
           return forces;
