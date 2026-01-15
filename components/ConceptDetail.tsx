@@ -39,7 +39,10 @@ export default function ConceptDetail({ concept }: ConceptDetailProps) {
       {hypothesis && (
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-2 text-purple-700">
-            Hypothèse {concept.travaux.includes('Thèse') ? 'Thèse' : 'CIENS'}
+            {concept.travaux.includes('Thèse') ? 
+              'Hypothèse de recherche travaillée dans le cadre de la thèse' : 
+              'Hypothèse de recherche travaillée dans le cadre du projet portant sur la guerre cognitive menée au CIENS'
+            }
           </h3>
           <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-r-md">
             <p className="text-gray-700 leading-relaxed">{hypothesis}</p>
