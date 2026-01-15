@@ -19,6 +19,11 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
   const [highlightLinks, setHighlightLinks] = useState<Set<string>>(new Set());
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
 
+  // Visual constants for node rendering
+  const NODE_BASE_RADIUS = 15;
+  const TEXT_VERTICAL_SPACING = 4;
+  const TEXT_PADDING = 4;
+
   // Import react-force-graph-2d dynamically (client-side only)
   useEffect(() => {
     import('react-force-graph-2d').then((mod) => {
@@ -266,8 +271,7 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
           const textWidth = ctx.measureText(label).width;
 
           // Calculate circular bubble radius based on text
-          const baseRadius = 15;
-          const radius = baseRadius * sizeMultiplier;
+          const radius = NODE_BASE_RADIUS * sizeMultiplier;
 
           // Draw circular bubble
           ctx.beginPath();
@@ -281,19 +285,18 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
           ctx.stroke();
 
           // Draw label text below the bubble
-          const textOffset = radius + fontSize / 2 + 4;
+          const textOffset = radius + fontSize / 2 + TEXT_VERTICAL_SPACING;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'top';
           
           // Add text background for better readability
-          const textPadding = 4;
-          const textBoxWidth = textWidth + textPadding * 2;
-          const textBoxHeight = fontSize + textPadding * 2;
+          const textBoxWidth = textWidth + TEXT_PADDING * 2;
+          const textBoxHeight = fontSize + TEXT_PADDING * 2;
           
           ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
           ctx.fillRect(
             node.x - textBoxWidth / 2,
-            node.y + textOffset - textPadding,
+            node.y + textOffset - TEXT_PADDING,
             textBoxWidth,
             textBoxHeight
           );
