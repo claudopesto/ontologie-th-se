@@ -13,6 +13,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   useEffect(() => {
     async function loadConcepts() {
@@ -48,21 +49,29 @@ export default function Home() {
     );
   }
 
-  // Filter concepts based on selected filter
+  // Filter concepts based on selected filter and category
   const filteredConcepts = concepts.filter(concept => {
-    if (selectedFilter === 'all') return true;
-
-    // For CIENS filter, include concepts with "CIENS" or "Thèse + CIENS"
-    if (selectedFilter === 'CIENS') {
-      return concept.travaux.includes('CIENS');
+    // Apply travaux filter first
+    let passesTravauxFilter = false;
+    if (selectedFilter === 'all') {
+      passesTravauxFilter = true;
+    } else if (selectedFilter === 'CIENS') {
+      passesTravauxFilter = concept.travaux.includes('CIENS');
+    } else if (selectedFilter === 'Thèse') {
+      passesTravauxFilter = concept.travaux.includes('Thèse');
+    } else {
+      passesTravauxFilter = concept.travaux === selectedFilter;
     }
 
-    // For Thèse filter, include concepts with "Thèse" or "Thèse + CIENS"
-    if (selectedFilter === 'Thèse') {
-      return concept.travaux.includes('Thèse');
+    // Apply category filter
+    let passesCategoryFilter = false;
+    if (selectedCategory === 'all') {
+      passesCategoryFilter = true;
+    } else {
+      passesCategoryFilter = concept.categorie === selectedCategory;
     }
 
-    return concept.travaux === selectedFilter;
+    return passesTravauxFilter && passesCategoryFilter;
   });
 
   return (
@@ -82,6 +91,8 @@ export default function Home() {
             onConceptClick={setSelectedConcept}
             selectedFilter={selectedFilter}
             onFilterChange={setSelectedFilter}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
           />
         </div>
 
@@ -91,6 +102,7 @@ export default function Home() {
             concepts={concepts}
             onNodeClick={setSelectedConcept}
             selectedFilter={selectedFilter}
+            selectedCategory={selectedCategory}
           />
         </div>
 

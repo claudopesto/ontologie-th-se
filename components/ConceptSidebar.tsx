@@ -9,6 +9,8 @@ interface ConceptSidebarProps {
   onConceptClick: (concept: Concept) => void;
   selectedFilter: string;
   onFilterChange: (filter: string) => void;
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
 }
 
 export default function ConceptSidebar({
@@ -16,9 +18,14 @@ export default function ConceptSidebar({
   selectedConcept,
   onConceptClick,
   selectedFilter,
-  onFilterChange
+  onFilterChange,
+  selectedCategory,
+  onCategoryChange
 }: ConceptSidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Get unique categories for filter buttons
+  const categories = Array.from(new Set(concepts.map(concept => concept.categorie).filter(cat => cat.trim())));
 
   // Filter concepts by search query
   const filteredConcepts = concepts.filter(concept =>
@@ -39,8 +46,8 @@ export default function ConceptSidebar({
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
         />
 
-        {/* Filter Buttons */}
-        <div className="flex gap-2">
+        {/* Filter Buttons - Travaux */}
+        <div className="flex gap-2 mb-3">
           <button
             onClick={() => onFilterChange('all')}
             className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -72,6 +79,38 @@ export default function ConceptSidebar({
             CIENS
           </button>
         </div>
+
+        {/* Filter Buttons - Catégories */}
+        {categories.length > 0 && (
+          <div>
+            <h3 className="text-sm font-semibold text-white mb-2">Catégories</h3>
+            <div className="flex flex-wrap gap-1">
+              <button
+                onClick={() => onCategoryChange('all')}
+                className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                  selectedCategory === 'all'
+                    ? 'bg-white text-gray-900'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                Toutes
+              </button>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => onCategoryChange(category)}
+                  className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                    selectedCategory === category
+                      ? 'bg-white text-gray-900'
+                      : 'bg-white/20 text-white hover:bg-white/30'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Concepts List */}

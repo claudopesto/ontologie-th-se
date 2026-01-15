@@ -9,6 +9,7 @@ export interface Concept {
   reference_auteur2: string;
   citation_auteur2: string;
   relations: string;
+  categorie: string;
 }
 
 export interface GraphNode {

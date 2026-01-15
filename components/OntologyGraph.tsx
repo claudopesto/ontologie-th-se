@@ -7,9 +7,10 @@ interface OntologyGraphProps {
   concepts: Concept[];
   onNodeClick: (concept: Concept) => void;
   selectedFilter: string;
+  selectedCategory: string;
 }
 
-export default function OntologyGraph({ concepts, onNodeClick, selectedFilter }: OntologyGraphProps) {
+export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, selectedCategory }: OntologyGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const fgRef = useRef<any>(null);
   const [ForceGraph2D, setForceGraph2D] = useState<any>(null);
@@ -54,16 +55,29 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter }:
 
   // Generate graph data from concepts with useMemo to avoid recreating on every render
   const graphData: GraphData = useMemo(() => {
-    // Filter concepts based on selected filter
+    // Filter concepts based on selected filter and category
     const filteredConcepts = concepts.filter(concept => {
-      if (selectedFilter === 'all') return true;
-      if (selectedFilter === 'CIENS') {
-        return concept.travaux.includes('CIENS');
+      // Apply travaux filter
+      let passesTravauxFilter = false;
+      if (selectedFilter === 'all') {
+        passesTravauxFilter = true;
+      } else if (selectedFilter === 'CIENS') {
+        passesTravauxFilter = concept.travaux.includes('CIENS');
+      } else if (selectedFilter === 'Thèse') {
+        passesTravauxFilter = concept.travaux.includes('Thèse');
+      } else {
+        passesTravauxFilter = concept.travaux === selectedFilter;
       }
-      if (selectedFilter === 'Thèse') {
-        return concept.travaux.includes('Thèse');
+
+      // Apply category filter
+      let passesCategoryFilter = false;
+      if (selectedCategory === 'all') {
+        passesCategoryFilter = true;
+      } else {
+        passesCategoryFilter = concept.categorie === selectedCategory;
       }
-      return concept.travaux === selectedFilter;
+
+      return passesTravauxFilter && passesCategoryFilter;
     });
 
     const data: GraphData = {
@@ -116,7 +130,7 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter }:
     console.log('Links:', data.links);
 
     return data;
-  }, [concepts, selectedFilter]);
+  }, [concepts, selectedFilter, selectedCategory]);
 
   const handleNodeClick = useCallback((node: any) => {
     const concept = concepts.find(c => c.label === node.id);
