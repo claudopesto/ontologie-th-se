@@ -46,6 +46,26 @@ npm run dev
 
 Ouvrir [http://localhost:3000](http://localhost:3000) dans votre navigateur.
 
+### Configuration rapide pour développement local
+
+Si vous souhaitez tester rapidement l'application en local avec les données de test :
+
+1. Créez un fichier `.env.local` à la racine du projet :
+```bash
+NEXT_PUBLIC_GOOGLE_SHEETS_SPREADSHEET_ID=1N-6a1jDlqqxrn_jNYVw-f98BsgqcCCPnCOCnwNUxEGw
+NEXT_PUBLIC_GOOGLE_SHEETS_API_KEY=AIzaSyBaYOTs8pGLtN_UPAqR2cmAuh139krUx3o
+```
+
+2. Installez les dépendances et lancez le serveur :
+```bash
+npm install
+npm run dev
+```
+
+3. Ouvrez [http://localhost:3000](http://localhost:3000) dans votre navigateur
+
+> **Note**: Ces clés sont pour le développement et les tests uniquement. Utilisez vos propres clés pour la production.
+
 ## Technologies utilisées
 
 - **Next.js 16** avec App Router
@@ -77,6 +97,30 @@ npm run build
 # Démarrer la version de production
 npm start
 ```
+
+## Résolution de problèmes
+
+### Le graphique ne s'affiche pas en local
+
+Si vous ne voyez pas le graphique après avoir lancé `npm run dev` :
+
+1. **Vérifiez que le fichier `.env.local` existe** à la racine du projet
+2. **Vérifiez les variables d'environnement** dans `.env.local` :
+   ```
+   NEXT_PUBLIC_GOOGLE_SHEETS_SPREADSHEET_ID=1N-6a1jDlqqxrn_jNYVw-f98BsgqcCCPnCOCnwNUxEGw
+   NEXT_PUBLIC_GOOGLE_SHEETS_API_KEY=AIzaSyBaYOTs8pGLtN_UPAqR2cmAuh139krUx3o
+   ```
+3. **Redémarrez le serveur** après avoir créé/modifié `.env.local` :
+   - Arrêtez le serveur (Ctrl+C)
+   - Relancez avec `npm run dev`
+4. **Vérifiez la console du navigateur** (F12) pour voir s'il y a des erreurs
+5. **Attendez quelques secondes** - le graphique peut prendre un moment pour charger les données depuis Google Sheets
+
+### Erreur "Failed to fetch" ou "ERR_BLOCKED_BY_CLIENT"
+
+Si vous voyez ces erreurs dans la console :
+- Désactivez temporairement les bloqueurs de publicité ou extensions de confidentialité
+- Vérifiez que vous pouvez accéder à `sheets.googleapis.com`
 
 ## Déploiement
 
