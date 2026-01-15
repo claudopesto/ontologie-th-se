@@ -83,32 +83,22 @@ export default function ConceptSidebar({
         {/* Filter Buttons - Catégories */}
         {categories.length > 0 && (
           <div>
-            <h3 className="text-sm font-semibold text-white mb-2">Catégories</h3>
-            <div className="flex flex-wrap gap-1">
-              <button
-                onClick={() => onCategoryChange('all')}
-                className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
-                  selectedCategory === 'all'
-                    ? 'bg-white text-gray-900'
-                    : 'bg-white/20 text-white hover:bg-white/30'
-                }`}
-              >
-                Toutes
-              </button>
+            <label htmlFor="category-select" className="block text-sm font-semibold text-white mb-2">
+              Catégories
+            </label>
+            <select
+              id="category-select"
+              value={selectedCategory}
+              onChange={(e) => onCategoryChange(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+            >
+              <option value="all">Toutes les catégories</option>
               {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => onCategoryChange(category)}
-                  className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
-                    selectedCategory === category
-                      ? 'bg-white text-gray-900'
-                      : 'bg-white/20 text-white hover:bg-white/30'
-                  }`}
-                >
+                <option key={category} value={category}>
                   {category}
-                </button>
+                </option>
               ))}
-            </div>
+            </select>
           </div>
         )}
       </div>
