@@ -46,42 +46,60 @@ export default function ConceptSidebar({
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
         />
 
-        {/* Filter Dropdown - Travaux */}
+        {/* Filter Options - Travaux */}
         <div className="mb-3">
-          <label htmlFor="travaux-select" className="block text-sm font-semibold text-white mb-2">
-            Travaux
-          </label>
-          <select
-            id="travaux-select"
-            value={selectedFilter}
-            onChange={(e) => onFilterChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-          >
-            <option value="all">Tous les travaux</option>
-            <option value="Thèse">Thèse</option>
-            <option value="CIENS">CIENS</option>
-          </select>
+          <h3 className="text-sm font-semibold text-white mb-2">Travaux</h3>
+          <div className="space-y-1">
+            {[
+              { value: 'all', label: 'Tous les travaux' },
+              { value: 'Thèse', label: 'Thèse' },
+              { value: 'CIENS', label: 'CIENS' }
+            ].map((option) => (
+              <label key={option.value} className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="travaux-filter"
+                  value={option.value}
+                  checked={selectedFilter === option.value}
+                  onChange={(e) => onFilterChange(e.target.value)}
+                  className="text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm text-white">{option.label}</span>
+              </label>
+            ))}
+          </div>
         </div>
 
-        {/* Filter Dropdown - Catégories */}
+        {/* Filter Options - Catégories */}
         {categories.length > 0 && (
           <div>
-            <label htmlFor="category-select" className="block text-sm font-semibold text-white mb-2">
-              Catégories
-            </label>
-            <select
-              id="category-select"
-              value={selectedCategory}
-              onChange={(e) => onCategoryChange(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-            >
-              <option value="all">Toutes les catégories</option>
+            <h3 className="text-sm font-semibold text-white mb-2">Catégories</h3>
+            <div className="space-y-1 max-h-32 overflow-y-auto">
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="category-filter"
+                  value="all"
+                  checked={selectedCategory === 'all'}
+                  onChange={(e) => onCategoryChange(e.target.value)}
+                  className="text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm text-white">Toutes les catégories</span>
+              </label>
               {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
+                <label key={category} className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="category-filter"
+                    value={category}
+                    checked={selectedCategory === category}
+                    onChange={(e) => onCategoryChange(e.target.value)}
+                    className="text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-white">{category}</span>
+                </label>
               ))}
-            </select>
+            </div>
           </div>
         )}
       </div>
