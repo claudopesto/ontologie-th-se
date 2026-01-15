@@ -47,7 +47,7 @@ export default function Home() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-white">
-        <p className="text-xl text-gray-600">Chargement des données...</p>
+        <p className="text-xl text-gray-600">Un instant, je cherche les recherches d&apos;Elsa...</p>
       </div>
     );
   }
@@ -156,7 +156,10 @@ export default function Home() {
 
         {/* Right: Concept Definition */}
         <div className="w-96 h-full overflow-y-auto border border-gray-300 rounded-xl shadow-sm">
-          <ConceptDetail concept={selectedConcept} />
+          <ConceptDetail 
+            concept={selectedConcept}
+            onReturnToGraph={() => setMobileActiveTab('graph')} 
+          />
         </div>
       </div>
 
@@ -198,7 +201,10 @@ export default function Home() {
         {/* Detail Tab */}
         <div className={`${mobileActiveTab === 'detail' ? 'flex' : 'hidden'} flex-1 flex-col overflow-hidden`}>
           <div className="flex-1 overflow-y-auto">
-            <ConceptDetail concept={selectedConcept} />
+            <ConceptDetail 
+              concept={selectedConcept} 
+              onReturnToGraph={() => setMobileActiveTab('graph')} 
+            />
           </div>
         </div>
       </div>

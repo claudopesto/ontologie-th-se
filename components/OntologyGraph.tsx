@@ -192,7 +192,7 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
   if (!ForceGraph2D) {
     return (
       <div ref={containerRef} className="w-full h-full flex items-center justify-center bg-white">
-        <p className="text-gray-500">Chargement du graphique...</p>
+        <p className="text-gray-500">Un instant, je cherche les recherches d'Elsa</p>
       </div>
     );
   }

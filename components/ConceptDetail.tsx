@@ -2,9 +2,10 @@ import { Concept } from '@/types/ontology';
 
 interface ConceptDetailProps {
   concept: Concept | null;
+  onReturnToGraph?: () => void;
 }
 
-export default function ConceptDetail({ concept }: ConceptDetailProps) {
+export default function ConceptDetail({ concept, onReturnToGraph }: ConceptDetailProps) {
   if (!concept) {
     return (
       <div className="p-4 sm:p-6 bg-white border-t border-gray-300 h-full flex items-center justify-center">
@@ -38,7 +39,7 @@ export default function ConceptDetail({ concept }: ConceptDetailProps) {
       {/* Mobile: Back to graph button */}
       <div className="lg:hidden mb-4">
         <button
-          onClick={() => window.history.back()}
+          onClick={onReturnToGraph}
           className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm"
         >
           <span className="mr-1">←</span>
