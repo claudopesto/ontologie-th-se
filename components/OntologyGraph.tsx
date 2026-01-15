@@ -30,16 +30,27 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        // On mobile, ensure minimum usable dimensions
+        const minHeight = window.innerWidth < 768 ? Math.max(400, window.innerHeight * 0.6) : rect.height;
         setDimensions({
-          width: containerRef.current.offsetWidth,
-          height: containerRef.current.offsetHeight,
+          width: rect.width,
+          height: Math.max(minHeight, rect.height),
         });
       }
     };
 
     updateDimensions();
     window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
+    // Add orientation change for mobile
+    window.addEventListener('orientationchange', () => {
+      setTimeout(updateDimensions, 100);
+    });
+    
+    return () => {
+      window.removeEventListener('resize', updateDimensions);
+      window.removeEventListener('orientationchange', updateDimensions);
+    };
   }, []);
 
   // Function to get color based on travaux

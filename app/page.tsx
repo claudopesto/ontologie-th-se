@@ -6,6 +6,7 @@ import { fetchConceptsFromSheet } from '@/lib/googleSheets';
 import OntologyGraph from '@/components/OntologyGraph';
 import ConceptSidebar from '@/components/ConceptSidebar';
 import ConceptDetail from '@/components/ConceptDetail';
+import MobileHelp from '@/components/MobileHelp';
 
 export default function Home() {
   const [concepts, setConcepts] = useState<Concept[]>([]);
@@ -14,6 +15,9 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  
+  // Mobile navigation state
+  const [mobileActiveTab, setMobileActiveTab] = useState<'menu' | 'graph' | 'detail'>('graph');
 
   useEffect(() => {
     async function loadConcepts() {
@@ -32,6 +36,13 @@ export default function Home() {
 
     loadConcepts();
   }, []);
+
+  // Auto switch to detail tab when concept is selected on mobile
+  useEffect(() => {
+    if (selectedConcept && window.innerWidth < 1024) {
+      setMobileActiveTab('detail');
+    }
+  }, [selectedConcept]);
 
   if (loading) {
     return (
@@ -75,16 +86,53 @@ export default function Home() {
   });
 
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex flex-col bg-white min-h-screen lg:h-screen">
       {/* Header */}
-      <header className="px-4 md:px-6 py-3 md:py-4 shadow-md text-center" style={{ backgroundColor: '#7c81fd' }}>
-        <h1 className="text-lg md:text-2xl font-bold text-white">Recherches universitaires d&apos;Elsa Novelli</h1>
+      <header className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 shadow-md text-center" style={{ backgroundColor: '#7c81fd' }}>
+        <h1 className="text-sm sm:text-lg md:text-2xl font-bold text-white">Recherches universitaires d&apos;Elsa Novelli</h1>
       </header>
 
-      {/* Main Content Area - Responsive Layout */}
-      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden m-2 md:m-4 gap-2 md:gap-4">
-        {/* Top/Left: Menu/Filters */}
-        <div className="w-full lg:w-80 h-auto lg:h-full border border-gray-300 rounded-xl overflow-y-auto shadow-sm">
+      {/* Mobile Navigation Tabs - Only visible on mobile */}
+      <div className="lg:hidden border-b border-gray-300">
+        <div className="flex">
+          <button
+            onClick={() => setMobileActiveTab('menu')}
+            className={`flex-1 py-3 px-2 text-sm font-medium text-center transition-colors ${
+              mobileActiveTab === 'menu' 
+                ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600' 
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            📋 Filtres & Concepts
+          </button>
+          <button
+            onClick={() => setMobileActiveTab('graph')}
+            className={`flex-1 py-3 px-2 text-sm font-medium text-center transition-colors ${
+              mobileActiveTab === 'graph' 
+                ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600' 
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            🕸️ Graphique
+          </button>
+          <button
+            onClick={() => setMobileActiveTab('detail')}
+            className={`flex-1 py-3 px-2 text-sm font-medium text-center transition-colors ${
+              mobileActiveTab === 'detail' 
+                ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600' 
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            📖 Définition
+            {selectedConcept && <span className="ml-1 inline-block w-2 h-2 bg-blue-600 rounded-full"></span>}
+          </button>
+        </div>
+      </div>
+
+      {/* Desktop Layout - Side by side */}
+      <div className="hidden lg:flex flex-1 overflow-hidden m-4 gap-4">
+        {/* Left: Menu/Filters */}
+        <div className="w-80 h-full border border-gray-300 rounded-xl overflow-y-auto shadow-sm">
           <ConceptSidebar
             concepts={filteredConcepts}
             selectedConcept={selectedConcept}
@@ -97,7 +145,7 @@ export default function Home() {
         </div>
 
         {/* Center: Graph Visualization */}
-        <div className="flex-1 h-[50vh] lg:h-full border border-gray-300 rounded-xl overflow-hidden shadow-sm">
+        <div className="flex-1 h-full border border-gray-300 rounded-xl overflow-hidden shadow-sm">
           <OntologyGraph
             concepts={concepts}
             onNodeClick={setSelectedConcept}
@@ -106,11 +154,57 @@ export default function Home() {
           />
         </div>
 
-        {/* Right/Bottom: Concept Definition */}
-        <div className="w-full lg:w-96 h-auto lg:h-full overflow-y-auto border border-gray-300 rounded-xl shadow-sm">
+        {/* Right: Concept Definition */}
+        <div className="w-96 h-full overflow-y-auto border border-gray-300 rounded-xl shadow-sm">
           <ConceptDetail concept={selectedConcept} />
         </div>
       </div>
+
+      {/* Mobile Layout - Tabbed interface with full height sections */}
+      <div className="lg:hidden flex-1 flex flex-col">
+        {/* Menu Tab */}
+        <div className={`${mobileActiveTab === 'menu' ? 'flex' : 'hidden'} flex-1 flex-col overflow-hidden`}>
+          <div className="flex-1 overflow-y-auto">
+            <ConceptSidebar
+              concepts={filteredConcepts}
+              selectedConcept={selectedConcept}
+              onConceptClick={(concept) => {
+                setSelectedConcept(concept);
+                setMobileActiveTab('detail');
+              }}
+              selectedFilter={selectedFilter}
+              onFilterChange={setSelectedFilter}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+            />
+          </div>
+        </div>
+
+        {/* Graph Tab */}
+        <div className={`${mobileActiveTab === 'graph' ? 'flex' : 'hidden'} flex-1 flex-col overflow-hidden`}>
+          <div className="flex-1 min-h-0">
+            <OntologyGraph
+              concepts={concepts}
+              onNodeClick={(concept) => {
+                setSelectedConcept(concept);
+                setMobileActiveTab('detail');
+              }}
+              selectedFilter={selectedFilter}
+              selectedCategory={selectedCategory}
+            />
+          </div>
+        </div>
+
+        {/* Detail Tab */}
+        <div className={`${mobileActiveTab === 'detail' ? 'flex' : 'hidden'} flex-1 flex-col overflow-hidden`}>
+          <div className="flex-1 overflow-y-auto">
+            <ConceptDetail concept={selectedConcept} />
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Help Component */}
+      <MobileHelp />
     </div>
   );
 }

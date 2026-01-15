@@ -35,8 +35,8 @@ export default function ConceptSidebar({
 
   return (
     <div className="h-full flex flex-col bg-gray-50 border-l border-gray-300">
-      <div className="p-4 border-b border-gray-300" style={{ backgroundColor: '#7c81fd' }}>
-        <h2 className="text-xl font-bold mb-3 text-white">Concepts</h2>
+      <div className="p-3 sm:p-4 border-b border-gray-300" style={{ backgroundColor: '#7c81fd' }}>
+        <h2 className="text-lg sm:text-xl font-bold mb-3 text-white">Concepts</h2>
 
         {/* Search Bar */}
         <input
@@ -44,7 +44,7 @@ export default function ConceptSidebar({
           placeholder="Rechercher un concept..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3 text-base"
         />
 
         {/* Filter Buttons - Travaux */}
