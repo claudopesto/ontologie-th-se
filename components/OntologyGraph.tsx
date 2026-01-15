@@ -328,10 +328,10 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
           ctx.fillText(label, textX, node.y);
         }}
         enableNodeDrag={true}
-        d3AlphaDecay={0.005}
-        d3VelocityDecay={0.2}
+        d3AlphaDecay={0.0001}
+        d3VelocityDecay={0.1}
         warmupTicks={100}
-        cooldownTime={10000}
+        cooldownTime={Infinity}
         nodeRelSize={8}
         d3Force={(forces: any) => {
           forces.charge.strength(-600);
