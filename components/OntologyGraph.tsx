@@ -54,9 +54,16 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
     };
   }, []);
 
-  // Function to get color based on travaux
-  const getColorForTravaux = (travaux: string): string => {
-    // If travaux contains both "Thèse" and "CIENS", use CIENS color
+  // Function to get color based on travaux and selected filter
+  const getColorForTravaux = (travaux: string, filter: string = 'all'): string => {
+    // If filtering by a specific work, show that work's color
+    if (filter === 'Thèse') {
+      return '#080d94'; // Blue for Thèse
+    } else if (filter === 'CIENS') {
+      return '#e2a9f1'; // Purple for CIENS
+    }
+    
+    // If showing all, color by actual travaux composition
     if (travaux.includes('CIENS')) {
       return '#e2a9f1'; // Purple for CIENS (including Thèse + CIENS)
     } else if (travaux.includes('Thèse')) {
@@ -97,7 +104,7 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
       nodes: filteredConcepts.map((concept) => ({
         id: concept.label,
         label: concept.label,
-        color: getColorForTravaux(concept.travaux),
+        color: getColorForTravaux(concept.travaux, selectedFilter),
       })),
       links: [],
     };
