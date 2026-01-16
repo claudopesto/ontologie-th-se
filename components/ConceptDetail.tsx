@@ -26,12 +26,27 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
 
   // Determine which hypothesis to show based on concept's travaux
   const getHypothesis = () => {
-    if (concept.travaux.includes('Thèse') && concept.hypothese_these) {
-      return concept.hypothese_these;
-    } else if (concept.travaux.includes('CIENS') && concept.hypothese_ciens) {
-      return concept.hypothese_ciens;
+    const hypotheses = [];
+    
+    // Add CIENS hypothesis first if exists and travaux includes CIENS
+    if (concept.travaux.includes('CIENS') && concept.hypothese_ciens) {
+      hypotheses.push({
+        type: 'CIENS',
+        text: concept.hypothese_ciens,
+        label: 'Hypothèse de recherche travaillée dans le cadre du projet portant sur la guerre cognitive menée au CIENS'
+      });
     }
-    return null;
+    
+    // Add Thèse hypothesis if exists and travaux includes Thèse
+    if (concept.travaux.includes('Thèse') && concept.hypothese_these) {
+      hypotheses.push({
+        type: 'Thèse',
+        text: concept.hypothese_these,
+        label: 'Hypothèse de recherche travaillée dans le cadre de la thèse'
+      });
+    }
+    
+    return hypotheses;
   };
 
   // Get related concepts from the relations field
@@ -97,19 +112,20 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
         </div>
       )}
 
-      {hypothesis && (
+      {hypothesis && hypothesis.length > 0 && (
         <div className="mb-6">
-          <h3 className="text-base sm:text-lg font-semibold mb-2 text-purple-700 leading-tight">
-            {concept.travaux.includes('Thèse') ? 
-              'Hypothèse de recherche travaillée dans le cadre de la thèse' : 
-              'Hypothèse de recherche travaillée dans le cadre du projet portant sur la guerre cognitive menée au CIENS'
-            }
-          </h3>
-          <div className="bg-purple-50 border-l-4 border-purple-500 p-3 sm:p-4 rounded-r-md">
-            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
-              {hypothesis}
-            </p>
-          </div>
+          {hypothesis.map((hyp, index) => (
+            <div key={index} className="mb-4">
+              <h3 className="text-base sm:text-lg font-semibold mb-2 text-purple-700 leading-tight">
+                {hyp.label}
+              </h3>
+              <div className="bg-purple-50 border-l-4 border-purple-500 p-3 sm:p-4 rounded-r-md">
+                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+                  {hyp.text}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
