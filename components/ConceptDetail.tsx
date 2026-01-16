@@ -29,19 +29,21 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
     const hypotheses = [];
     
     // Add CIENS hypothesis first if exists and travaux includes CIENS
-    if (concept.travaux.includes('CIENS') && concept.hypothese_ciens) {
+    const ciensTrimmed = concept.hypothese_ciens?.trim();
+    if (concept.travaux.includes('CIENS') && ciensTrimmed) {
       hypotheses.push({
         type: 'CIENS',
-        text: concept.hypothese_ciens,
+        text: ciensTrimmed,
         label: 'Hypothèse de recherche travaillée dans le cadre du projet portant sur la guerre cognitive menée au CIENS'
       });
     }
     
     // Add Thèse hypothesis if exists and travaux includes Thèse
-    if (concept.travaux.includes('Thèse') && concept.hypothese_these) {
+    const theseTrimmed = concept.hypothese_these?.trim();
+    if (concept.travaux.includes('Thèse') && theseTrimmed) {
       hypotheses.push({
         type: 'Thèse',
-        text: concept.hypothese_these,
+        text: theseTrimmed,
         label: 'Hypothèse de recherche travaillée dans le cadre de la thèse'
       });
     }
@@ -165,12 +167,20 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
         </div>
       )}
 
-      {/* Debug info for relations */}
+      {/* Debug info for relations and hypothesis */}
       {process.env.NODE_ENV === 'development' && (
         <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs">
           <strong>Debug - Relations:</strong> "{concept.relations || 'aucune'}"
           <br />
           <strong>Related concepts found:</strong> {relatedConcepts.length}
+          <br />
+          <strong>Travaux:</strong> "{concept.travaux}"
+          <br />
+          <strong>Hypothèse Thèse:</strong> "{concept.hypothese_these || 'vide'}"
+          <br />
+          <strong>Hypothèse CIENS:</strong> "{concept.hypothese_ciens || 'vide'}"
+          <br />
+          <strong>Hypothèses affichées:</strong> {hypothesis.length}
         </div>
       )}
 
