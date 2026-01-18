@@ -25,8 +25,8 @@ export default function ConceptSidebar({
   const [searchQuery, setSearchQuery] = useState('');
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
-  // Get unique categories for filter buttons
-  const categories = Array.from(new Set(concepts.map(concept => concept.categorie).filter(cat => cat.trim())));
+  // Get unique categories for filter buttons, sorted alphabetically
+  const categories = Array.from(new Set(concepts.map(concept => concept.categorie).filter(cat => cat.trim()))).sort((a, b) => a.localeCompare(b));
 
   // Filter concepts by search query
   const filteredConcepts = concepts.filter(concept =>
