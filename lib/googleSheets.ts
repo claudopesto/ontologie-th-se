@@ -4,6 +4,14 @@ const SPREADSHEET_ID = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_SPREADSHEET_ID;
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_API_KEY;
 const RANGE = 'concepts!A:N'; // Nom de la feuille: concepts (A to N includes hypotheses)
 
+// Helper function to split multiple values (supports both comma and semicolon)
+export function splitMultipleValues(value: string): string[] {
+  return value
+    .split(/[,;]/) // Split by comma or semicolon
+    .map(item => item.trim())
+    .filter(item => item);
+}
+
 export async function fetchConceptsFromSheet(): Promise<Concept[]> {
   try {
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;

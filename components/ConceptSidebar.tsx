@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Concept } from '@/types/ontology';
+import { splitMultipleValues } from '@/lib/googleSheets';
 
 interface ConceptSidebarProps {
   concepts: Concept[];
@@ -26,16 +27,11 @@ export default function ConceptSidebar({
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
   // Get unique categories for filter buttons, sorted alphabetically
-  // Support multiple categories separated by semicolon
+  // Support multiple categories separated by comma or semicolon
   const categories = Array.from(
     new Set(
       concepts
-        .flatMap(concept => 
-          concept.categorie
-            .split(';')
-            .map(cat => cat.trim())
-            .filter(cat => cat)
-        )
+        .flatMap(concept => splitMultipleValues(concept.categorie))
     )
   ).sort((a, b) => a.localeCompare(b));
 

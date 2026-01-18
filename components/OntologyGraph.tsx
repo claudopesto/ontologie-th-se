@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { Concept, GraphData } from '@/types/ontology';
+import { splitMultipleValues } from '@/lib/googleSheets';
 import * as d3Force from 'd3-force';
 
 interface OntologyGraphProps {
@@ -89,15 +90,12 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
         passesTravauxFilter = concept.travaux === selectedFilter;
       }
 
-      // Apply category filter - support multiple categories separated by semicolon
+      // Apply category filter - support multiple categories separated by comma or semicolon
       let passesCategoryFilter = false;
       if (selectedCategory === 'all') {
         passesCategoryFilter = true;
       } else {
-        const conceptCategories = concept.categorie
-          .split(';')
-          .map(cat => cat.trim())
-          .filter(cat => cat);
+        const conceptCategories = splitMultipleValues(concept.categorie);
         passesCategoryFilter = conceptCategories.includes(selectedCategory);
       }
 
