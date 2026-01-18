@@ -89,12 +89,16 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
         passesTravauxFilter = concept.travaux === selectedFilter;
       }
 
-      // Apply category filter
+      // Apply category filter - support multiple categories separated by semicolon
       let passesCategoryFilter = false;
       if (selectedCategory === 'all') {
         passesCategoryFilter = true;
       } else {
-        passesCategoryFilter = concept.categorie === selectedCategory;
+        const conceptCategories = concept.categorie
+          .split(';')
+          .map(cat => cat.trim())
+          .filter(cat => cat);
+        passesCategoryFilter = conceptCategories.includes(selectedCategory);
       }
 
       return passesTravauxFilter && passesCategoryFilter;
