@@ -43,6 +43,16 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
     };
 
     updateDimensions();
+    
+    // Use ResizeObserver for more accurate dimension tracking
+    const resizeObserver = new ResizeObserver(() => {
+      updateDimensions();
+    });
+    
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+    
     window.addEventListener('resize', updateDimensions);
     // Add orientation change for mobile
     window.addEventListener('orientationchange', () => {
@@ -50,6 +60,7 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
     });
     
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener('resize', updateDimensions);
       window.removeEventListener('orientationchange', updateDimensions);
     };

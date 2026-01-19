@@ -213,7 +213,7 @@ export default function Home() {
         </div>
 
         {/* Center: Graph Visualization */}
-        <div className="flex-1 h-full border border-gray-300 rounded-xl overflow-hidden shadow-sm">
+        <div className="flex-1 h-full border border-gray-300 rounded-xl overflow-hidden shadow-sm min-h-0">
           <OntologyGraph
             concepts={concepts}
             onNodeClick={setSelectedConcept}
