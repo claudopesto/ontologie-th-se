@@ -18,6 +18,12 @@ export default function Home() {
   
   // Mobile navigation state
   const [mobileActiveTab, setMobileActiveTab] = useState<'menu' | 'graph' | 'detail'>('graph');
+  
+  // Window resize state for desktop layout
+  const [leftPanelWidth, setLeftPanelWidth] = useState(320); // w-80 = 320px
+  const [rightPanelWidth, setRightPanelWidth] = useState(384); // w-96 = 384px
+  const minPanelWidth = 200;
+  const maxPanelWidth = 600;
 
   useEffect(() => {
     async function loadConcepts() {
@@ -43,6 +49,21 @@ export default function Home() {
       setMobileActiveTab('detail');
     }
   }, [selectedConcept]);
+
+  // Panel resize functions
+  const adjustLeftPanel = (direction: 'increase' | 'decrease') => {
+    setLeftPanelWidth(prev => {
+      const newWidth = direction === 'increase' ? prev + 50 : prev - 50;
+      return Math.max(minPanelWidth, Math.min(maxPanelWidth, newWidth));
+    });
+  };
+
+  const adjustRightPanel = (direction: 'increase' | 'decrease') => {
+    setRightPanelWidth(prev => {
+      const newWidth = direction === 'increase' ? prev + 50 : prev - 50;
+      return Math.max(minPanelWidth, Math.min(maxPanelWidth, newWidth));
+    });
+  };
 
   if (loading) {
     return (
@@ -132,7 +153,7 @@ export default function Home() {
       {/* Desktop Layout - Side by side */}
       <div className="hidden lg:flex flex-1 overflow-hidden m-4 gap-4">
         {/* Left: Menu/Filters */}
-        <div className="w-80 h-full border border-gray-300 rounded-xl overflow-y-auto shadow-sm">
+        <div style={{ width: `${leftPanelWidth}px` }} className="h-full border border-gray-300 rounded-xl overflow-y-auto shadow-sm flex flex-col">
           <ConceptSidebar
             concepts={filteredConcepts}
             selectedConcept={selectedConcept}
@@ -142,6 +163,23 @@ export default function Home() {
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
           />
+          {/* Resize buttons for left panel */}
+          <div className="flex gap-2 p-2 border-t border-gray-200 bg-gray-50">
+            <button
+              onClick={() => adjustLeftPanel('decrease')}
+              title="Réduire la fenêtre"
+              className="flex-1 px-2 py-1 text-sm bg-gray-300 hover:bg-gray-400 rounded transition-colors"
+            >
+              ➖
+            </button>
+            <button
+              onClick={() => adjustLeftPanel('increase')}
+              title="Augmenter la fenêtre"
+              className="flex-1 px-2 py-1 text-sm bg-gray-300 hover:bg-gray-400 rounded transition-colors"
+            >
+              ➕
+            </button>
+          </div>
         </div>
 
         {/* Center: Graph Visualization */}
@@ -155,13 +193,32 @@ export default function Home() {
         </div>
 
         {/* Right: Concept Definition */}
-        <div className="w-96 h-full overflow-y-auto border border-gray-300 rounded-xl shadow-sm">
-          <ConceptDetail 
-            concept={selectedConcept}
-            onReturnToGraph={() => setMobileActiveTab('graph')}
-            concepts={concepts}
-            onConceptClick={setSelectedConcept}
-          />
+        <div style={{ width: `${rightPanelWidth}px` }} className="h-full overflow-y-auto border border-gray-300 rounded-xl shadow-sm flex flex-col">
+          <div className="flex-1 overflow-y-auto">
+            <ConceptDetail 
+              concept={selectedConcept}
+              onReturnToGraph={() => setMobileActiveTab('graph')}
+              concepts={concepts}
+              onConceptClick={setSelectedConcept}
+            />
+          </div>
+          {/* Resize buttons for right panel */}
+          <div className="flex gap-2 p-2 border-t border-gray-200 bg-gray-50">
+            <button
+              onClick={() => adjustRightPanel('decrease')}
+              title="Réduire la fenêtre"
+              className="flex-1 px-2 py-1 text-sm bg-gray-300 hover:bg-gray-400 rounded transition-colors"
+            >
+              ➖
+            </button>
+            <button
+              onClick={() => adjustRightPanel('increase')}
+              title="Augmenter la fenêtre"
+              className="flex-1 px-2 py-1 text-sm bg-gray-300 hover:bg-gray-400 rounded transition-colors"
+            >
+              ➕
+            </button>
+          </div>
         </div>
       </div>
 
