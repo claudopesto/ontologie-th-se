@@ -6,10 +6,13 @@ const RANGE = 'concepts!A:N'; // Nom de la feuille: concepts (A to N includes hy
 
 // Helper function to split multiple values (supports both comma and semicolon)
 export function splitMultipleValues(value: string): string[] {
+  if (!value || typeof value !== 'string') {
+    return [];
+  }
   return value
     .split(/[,;]/) // Split by comma or semicolon
     .map(item => item.trim())
-    .filter(item => item);
+    .filter(item => item && item.length > 0); // Filter out empty and whitespace-only values
 }
 
 export async function fetchConceptsFromSheet(): Promise<Concept[]> {

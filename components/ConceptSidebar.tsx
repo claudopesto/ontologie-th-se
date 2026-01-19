@@ -28,10 +28,14 @@ export default function ConceptSidebar({
 
   // Get unique categories for filter buttons, sorted alphabetically
   // Support multiple categories separated by comma or semicolon
-  // Normalize to lowercase for deduplication
-  const allCategoryValues = concepts.flatMap(concept => 
-    splitMultipleValues(concept.categorie).map(cat => cat.toLowerCase().trim())
-  );
+  // Normalize to lowercase for deduplication and filter out empty values
+  const allCategoryValues = concepts
+    .filter(concept => concept.categorie && concept.categorie.trim()) // Filter concepts with empty categories
+    .flatMap(concept => 
+      splitMultipleValues(concept.categorie)
+        .map(cat => cat.toLowerCase().trim())
+        .filter(cat => cat && cat.length > 0) // Double-check for empty values
+    );
   
   const categories = Array.from(new Set(allCategoryValues)).sort((a, b) => a.localeCompare(b));
   
@@ -39,6 +43,7 @@ export default function ConceptSidebar({
   if (process.env.NODE_ENV === 'development') {
     console.log('Categories found:', categories);
     console.log('Raw categories before dedup:', allCategoryValues);
+    console.log('All concepts with categories:', concepts.filter(c => c.categorie).map(c => ({ label: c.label, categorie: c.categorie })));
   }
 
   // Filter concepts by search query
