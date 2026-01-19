@@ -50,7 +50,6 @@ export default function Home() {
     }
   }, [selectedConcept]);
 
-  // Panel resize functions
   const adjustLeftPanel = (direction: 'increase' | 'decrease') => {
     setLeftPanelWidth(prev => {
       const newWidth = direction === 'increase' ? prev + 50 : prev - 50;
@@ -63,6 +62,48 @@ export default function Home() {
       const newWidth = direction === 'increase' ? prev + 50 : prev - 50;
       return Math.max(minPanelWidth, Math.min(maxPanelWidth, newWidth));
     });
+  };
+
+  // Handle left panel resize
+  const handleLeftPanelMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = leftPanelWidth;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const delta = e.clientX - startX;
+      const newWidth = Math.max(minPanelWidth, Math.min(maxPanelWidth, startWidth + delta));
+      setLeftPanelWidth(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  // Handle right panel resize
+  const handleRightPanelMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = rightPanelWidth;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const delta = startX - e.clientX; // Reversed because it's on the left side of the panel
+      const newWidth = Math.max(minPanelWidth, Math.min(maxPanelWidth, startWidth + delta));
+      setRightPanelWidth(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
   };
 
   if (loading) {
@@ -153,7 +194,7 @@ export default function Home() {
       {/* Desktop Layout - Side by side */}
       <div className="hidden lg:flex flex-1 overflow-hidden m-4 gap-4">
         {/* Left: Menu/Filters */}
-        <div style={{ width: `${leftPanelWidth}px` }} className="h-full border border-gray-300 rounded-xl overflow-y-auto shadow-sm flex flex-col">
+        <div style={{ width: `${leftPanelWidth}px` }} className="h-full border border-gray-300 rounded-xl overflow-y-auto shadow-sm relative">
           <ConceptSidebar
             concepts={filteredConcepts}
             selectedConcept={selectedConcept}
@@ -163,23 +204,12 @@ export default function Home() {
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
           />
-          {/* Resize buttons for left panel */}
-          <div className="flex gap-2 p-2 border-t border-gray-200 bg-gray-50">
-            <button
-              onClick={() => adjustLeftPanel('decrease')}
-              title="Réduire la fenêtre"
-              className="flex-1 px-2 py-1 text-sm bg-gray-300 hover:bg-gray-400 rounded transition-colors"
-            >
-              ➖
-            </button>
-            <button
-              onClick={() => adjustLeftPanel('increase')}
-              title="Augmenter la fenêtre"
-              className="flex-1 px-2 py-1 text-sm bg-gray-300 hover:bg-gray-400 rounded transition-colors"
-            >
-              ➕
-            </button>
-          </div>
+          {/* Resize handle - right edge */}
+          <div
+            onMouseDown={handleLeftPanelMouseDown}
+            className="absolute right-0 top-0 bottom-0 w-1 bg-gray-300 hover:bg-blue-500 cursor-col-resize transition-colors"
+            title="Glissez pour redimensionner"
+          />
         </div>
 
         {/* Center: Graph Visualization */}
@@ -193,32 +223,19 @@ export default function Home() {
         </div>
 
         {/* Right: Concept Definition */}
-        <div style={{ width: `${rightPanelWidth}px` }} className="h-full overflow-y-auto border border-gray-300 rounded-xl shadow-sm flex flex-col">
-          <div className="flex-1 overflow-y-auto">
-            <ConceptDetail 
-              concept={selectedConcept}
-              onReturnToGraph={() => setMobileActiveTab('graph')}
-              concepts={concepts}
-              onConceptClick={setSelectedConcept}
-            />
-          </div>
-          {/* Resize buttons for right panel */}
-          <div className="flex gap-2 p-2 border-t border-gray-200 bg-gray-50">
-            <button
-              onClick={() => adjustRightPanel('decrease')}
-              title="Réduire la fenêtre"
-              className="flex-1 px-2 py-1 text-sm bg-gray-300 hover:bg-gray-400 rounded transition-colors"
-            >
-              ➖
-            </button>
-            <button
-              onClick={() => adjustRightPanel('increase')}
-              title="Augmenter la fenêtre"
-              className="flex-1 px-2 py-1 text-sm bg-gray-300 hover:bg-gray-400 rounded transition-colors"
-            >
-              ➕
-            </button>
-          </div>
+        <div style={{ width: `${rightPanelWidth}px` }} className="h-full overflow-y-auto border border-gray-300 rounded-xl shadow-sm relative">
+          <ConceptDetail 
+            concept={selectedConcept}
+            onReturnToGraph={() => setMobileActiveTab('graph')}
+            concepts={concepts}
+            onConceptClick={setSelectedConcept}
+          />
+          {/* Resize handle - left edge */}
+          <div
+            onMouseDown={handleRightPanelMouseDown}
+            className="absolute left-0 top-0 bottom-0 w-1 bg-gray-300 hover:bg-blue-500 cursor-col-resize transition-colors"
+            title="Glissez pour redimensionner"
+          />
         </div>
       </div>
 
