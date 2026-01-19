@@ -28,12 +28,18 @@ export default function ConceptSidebar({
 
   // Get unique categories for filter buttons, sorted alphabetically
   // Support multiple categories separated by comma or semicolon
-  const categories = Array.from(
-    new Set(
-      concepts
-        .flatMap(concept => splitMultipleValues(concept.categorie))
-    )
-  ).sort((a, b) => a.localeCompare(b));
+  // Normalize to lowercase for deduplication
+  const allCategoryValues = concepts.flatMap(concept => 
+    splitMultipleValues(concept.categorie).map(cat => cat.toLowerCase().trim())
+  );
+  
+  const categories = Array.from(new Set(allCategoryValues)).sort((a, b) => a.localeCompare(b));
+  
+  // Debug: log categories to check for duplicates
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Categories found:', categories);
+    console.log('Raw categories before dedup:', allCategoryValues);
+  }
 
   // Filter concepts by search query
   const filteredConcepts = concepts.filter(concept =>

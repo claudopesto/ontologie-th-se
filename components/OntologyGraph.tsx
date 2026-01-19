@@ -95,8 +95,9 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
       if (selectedCategory === 'all') {
         passesCategoryFilter = true;
       } else {
-        const conceptCategories = splitMultipleValues(concept.categorie);
-        passesCategoryFilter = conceptCategories.includes(selectedCategory);
+        const conceptCategories = splitMultipleValues(concept.categorie)
+          .map(cat => cat.toLowerCase().trim()); // Normalize
+        passesCategoryFilter = conceptCategories.includes(selectedCategory.toLowerCase().trim());
       }
 
       return passesTravauxFilter && passesCategoryFilter;
