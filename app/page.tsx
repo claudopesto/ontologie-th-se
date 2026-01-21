@@ -196,7 +196,8 @@ export default function Home() {
         {/* Left: Menu/Filters */}
         <div style={{ width: `${leftPanelWidth}px` }} className="h-full border border-gray-300 rounded-xl overflow-y-auto shadow-sm relative">
           <ConceptSidebar
-            concepts={filteredConcepts}
+            concepts={concepts}
+            filteredConcepts={filteredConcepts}
             selectedConcept={selectedConcept}
             onConceptClick={setSelectedConcept}
             selectedFilter={selectedFilter}
@@ -245,7 +246,8 @@ export default function Home() {
         <div className={`${mobileActiveTab === 'menu' ? 'flex' : 'hidden'} flex-1 flex-col overflow-hidden`}>
           <div className="flex-1 overflow-y-auto">
             <ConceptSidebar
-              concepts={filteredConcepts}
+              concepts={concepts}
+              filteredConcepts={filteredConcepts}
               selectedConcept={selectedConcept}
               onConceptClick={(concept) => {
                 setSelectedConcept(concept);

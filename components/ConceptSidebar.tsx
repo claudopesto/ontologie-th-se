@@ -5,7 +5,8 @@ import { Concept } from '@/types/ontology';
 import { splitMultipleValues } from '@/lib/googleSheets';
 
 interface ConceptSidebarProps {
-  concepts: Concept[];
+  concepts: Concept[]; // All concepts for category extraction
+  filteredConcepts?: Concept[]; // Filtered concepts for display (optional)
   selectedConcept: Concept | null;
   onConceptClick: (concept: Concept) => void;
   selectedFilter: string;
@@ -16,6 +17,7 @@ interface ConceptSidebarProps {
 
 export default function ConceptSidebar({
   concepts,
+  filteredConcepts,
   selectedConcept,
   onConceptClick,
   selectedFilter,
@@ -25,6 +27,9 @@ export default function ConceptSidebar({
 }: ConceptSidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+
+  // Use filteredConcepts for display if provided, otherwise use all concepts
+  const conceptsToDisplay = filteredConcepts || concepts;
 
   // Get unique categories for filter buttons, sorted alphabetically
   // Support multiple categories separated by comma or semicolon
@@ -47,7 +52,7 @@ export default function ConceptSidebar({
   }
 
   // Filter concepts by search query
-  const filteredConcepts = concepts.filter(concept =>
+  const displayedConcepts = conceptsToDisplay.filter(concept =>
     concept.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -145,7 +150,7 @@ export default function ConceptSidebar({
       {/* Concepts List */}
       <div className="flex-1 overflow-y-auto p-4">
         <ul className="space-y-1">
-          {filteredConcepts.map((concept, index) => (
+          {displayedConcepts.map((concept, index) => (
             <li key={index}>
               <button
                 onClick={() => {
@@ -163,7 +168,7 @@ export default function ConceptSidebar({
             </li>
           ))}
         </ul>
-        {filteredConcepts.length === 0 && (
+        {displayedConcepts.length === 0 && (
           <p className="text-gray-500 text-center mt-4">Aucun concept trouvé</p>
         )}
       </div>
