@@ -46,25 +46,6 @@ export default function ConceptSidebar({
   const categories = Array.from(new Set(allCategoryValues))
     .filter(cat => cat && cat.length > 0) // Extra safety filter
     .sort((a, b) => a.localeCompare(b, 'fr', { numeric: true }));
-  
-  // Debug: log categories to check for duplicates
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Categories found:', categories);
-    console.log('Raw categories before dedup:', allCategoryValues);
-    
-    // Find which concepts have "cyberattaque"
-    const conceptsWithCyberattaque = concepts.filter(c => 
-      c.categorie && c.categorie.toLowerCase().includes('cyberattaque')
-    );
-    if (conceptsWithCyberattaque.length > 0) {
-      console.log('Concepts with "cyberattaque":', conceptsWithCyberattaque.map(c => ({ 
-        label: c.label, 
-        categorie: c.categorie 
-      })));
-    }
-    
-    console.log('All concepts with categories:', concepts.filter(c => c.categorie).map(c => ({ label: c.label, categorie: c.categorie })));
-  }
 
   // Filter concepts by search query
   const displayedConcepts = conceptsToDisplay.filter(concept =>
