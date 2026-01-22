@@ -54,7 +54,7 @@ export default function ConceptSidebar({
 
   return (
     <div className="h-full flex flex-col bg-gray-50 border-l border-gray-300">
-      <div className="p-3 sm:p-4 border-b border-gray-300" style={{ backgroundColor: '#A9A7E8' }}>
+      <div className="p-3 sm:p-4 border-b border-gray-300" style={{ backgroundColor: '#A2C2EB' }}>
         <h2 className="text-lg sm:text-xl font-bold mb-3 text-white">Concepts</h2>
 
         {/* Search Bar */}
