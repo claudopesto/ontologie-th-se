@@ -72,12 +72,12 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
     if (filter === 'Thèse') {
       return '#080d94'; // Blue for Thèse
     } else if (filter === 'CIENS') {
-      return '#F2C00F'; // Gold for CIENS
+      return '#EB9410'; // Orange for CIENS
     }
     
     // If showing all, color by actual travaux composition
     if (travaux.includes('CIENS')) {
-      return '#F2C00F'; // Gold for CIENS (including Thèse + CIENS)
+      return '#EB9410'; // Orange for CIENS (including Thèse + CIENS)
     } else if (travaux.includes('Thèse')) {
       return '#080d94'; // Blue for Thèse only
     }
