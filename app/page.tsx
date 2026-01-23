@@ -261,23 +261,24 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Graph Tab */}
-        <div className={`${mobileActiveTab === 'graph' ? 'flex' : 'hidden'} flex-1 flex-col overflow-hidden relative`}>
-          <div className="flex-1 overflow-hidden relative">
-            <OntologyGraph
-              concepts={concepts}
-              onNodeClick={(concept) => {
-                setSelectedConcept(concept);
-                setMobileActiveTab('detail');
-              }}
-              selectedFilter={selectedFilter}
-              selectedCategory={selectedCategory}
-            />
-            {/* Overlay gradient at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none" style={{
-              background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95))'
-            }}></div>
-          </div>
+        {/* Graph Tab - Use calc to set exact height (viewport - header - tabs) */}
+        <div 
+          className={`${mobileActiveTab === 'graph' ? 'block' : 'hidden'} relative`}
+          style={{ height: 'calc(100vh - 120px)' }}
+        >
+          <OntologyGraph
+            concepts={concepts}
+            onNodeClick={(concept) => {
+              setSelectedConcept(concept);
+              setMobileActiveTab('detail');
+            }}
+            selectedFilter={selectedFilter}
+            selectedCategory={selectedCategory}
+          />
+          {/* Overlay gradient at bottom */}
+          <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none" style={{
+            background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95))'
+          }}></div>
         </div>
 
         {/* Detail Tab */}
