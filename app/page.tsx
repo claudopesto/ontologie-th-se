@@ -262,8 +262,8 @@ export default function Home() {
         </div>
 
         {/* Graph Tab */}
-        <div className={`${mobileActiveTab === 'graph' ? 'flex' : 'hidden'} flex-1 flex-col overflow-hidden h-full`}>
-          <div className="flex-1 min-h-0 w-full h-full">
+        <div className={`${mobileActiveTab === 'graph' ? 'flex' : 'hidden'} flex-1 flex-col overflow-hidden h-full relative`}>
+          <div className="flex-1 min-h-0 w-full h-full relative">
             <OntologyGraph
               concepts={concepts}
               onNodeClick={(concept) => {
@@ -273,6 +273,10 @@ export default function Home() {
               selectedFilter={selectedFilter}
               selectedCategory={selectedCategory}
             />
+            {/* Overlay gradient at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none" style={{
+              background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95))'
+            }}></div>
           </div>
         </div>
 

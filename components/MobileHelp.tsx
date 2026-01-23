@@ -10,7 +10,8 @@ export default function MobileHelp() {
       {/* Help Button - Only visible on mobile */}
       <button
         onClick={() => setIsOpen(true)}
-        className="lg:hidden fixed bottom-2 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-40 pointer-events-auto"
+        className="lg:hidden fixed bottom-2 right-4 text-white p-3 rounded-full shadow-lg transition-colors z-40 pointer-events-auto hover:opacity-90"
+        style={{ backgroundColor: '#F52CA8' }}
         aria-label="Aide"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
