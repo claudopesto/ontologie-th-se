@@ -262,8 +262,8 @@ export default function Home() {
         </div>
 
         {/* Graph Tab */}
-        <div className={`${mobileActiveTab === 'graph' ? 'flex' : 'hidden'} flex-1 flex-col overflow-hidden h-full relative`}>
-          <div className="flex-1 min-h-0 w-full h-full relative">
+        <div className={`${mobileActiveTab === 'graph' ? 'flex' : 'hidden'} flex-1 overflow-hidden relative w-full h-full`}>
+          <div className="w-full h-full relative">
             <OntologyGraph
               concepts={concepts}
               onNodeClick={(concept) => {
