@@ -33,11 +33,10 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedFilter, s
     const updateDimensions = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        // On mobile, ensure minimum usable dimensions
-        const minHeight = window.innerWidth < 768 ? Math.max(400, window.innerHeight * 0.6) : rect.height;
+        // Use actual container dimensions without forced minimums
         setDimensions({
           width: rect.width,
-          height: Math.max(minHeight, rect.height),
+          height: rect.height,
         });
       }
     };
