@@ -241,7 +241,7 @@ export default function Home() {
       </div>
 
       {/* Mobile Layout - Tabbed interface with full height sections */}
-      <div className="lg:hidden flex-1 flex flex-col">
+      <div className="lg:hidden flex-1 flex flex-col overflow-hidden">
         {/* Menu Tab */}
         <div className={`${mobileActiveTab === 'menu' ? 'flex' : 'hidden'} flex-1 flex-col overflow-hidden`}>
           <div className="flex-1 overflow-y-auto">
