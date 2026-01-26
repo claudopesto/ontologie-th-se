@@ -150,7 +150,13 @@ export default function Home() {
   return (
     <div className="flex flex-col bg-white min-h-screen lg:h-screen">
       {/* Header */}
-      <header className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 shadow-md text-center" style={{ backgroundColor: '#A2C2EB' }}>
+      <header className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 shadow-md flex items-center justify-center gap-3" style={{ backgroundColor: '#A2C2EB' }}>
+        <img 
+          src="/IMG_THESE.webp" 
+          alt="Illustration thèse" 
+          className="h-8 sm:h-10 md:h-12 w-auto hidden sm:block"
+          loading="lazy"
+        />
         <h1 className="text-sm sm:text-lg md:text-2xl font-bold text-white">Recherches universitaires d&apos;Elsa Novelli</h1>
       </header>
 
