@@ -10,9 +10,14 @@ interface ConceptDetailProps {
 export default function ConceptDetail({ concept, onReturnToGraph, concepts = [], onConceptClick }: ConceptDetailProps) {
   if (!concept) {
     return (
-      <div className="p-4 sm:p-6 bg-white border-t border-gray-300 h-full flex items-center justify-center">
+      <div className="p-4 sm:p-6 bg-white border-t border-gray-300 h-full flex flex-col items-center justify-center">
+        <img 
+          src="/IMG_THESE.webp" 
+          alt="Illustration recherche" 
+          className="max-w-xs sm:max-w-sm md:max-w-md w-full h-auto mb-6 opacity-90"
+          loading="lazy"
+        />
         <div className="text-center">
-          <div className="text-4xl mb-4">📚</div>
           <p className="text-gray-500 italic text-sm sm:text-base">
             Sélectionnez un concept pour voir sa définition
           </p>
