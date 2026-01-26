@@ -154,8 +154,8 @@ export default function Home() {
         <h1 className="text-sm sm:text-lg md:text-2xl font-bold text-white">Recherches universitaires d&apos;Elsa Novelli</h1>
       </header>
 
-      {/* Mobile Navigation Tabs - Only visible on mobile */}
-      <div className="lg:hidden border-b border-gray-300">
+      {/* Mobile Navigation Tabs - Only visible on mobile/small tablets */}
+      <div className="md:hidden border-b border-gray-300">
         <div className="flex">
           <button
             onClick={() => setMobileActiveTab('menu')}
@@ -191,8 +191,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Desktop Layout - Side by side */}
-      <div className="hidden lg:flex flex-1 overflow-hidden m-4 gap-4">
+      {/* Desktop/Tablet Layout - Side by side */}
+      <div className="hidden md:flex flex-1 overflow-hidden m-4 gap-4">
         {/* Left: Menu/Filters */}
         <div style={{ width: `${leftPanelWidth}px` }} className="h-full border border-gray-300 rounded-xl overflow-y-auto shadow-sm relative">
           <ConceptSidebar
@@ -241,7 +241,7 @@ export default function Home() {
       </div>
 
       {/* Mobile Layout - Tabbed interface with full height sections */}
-      <div className="lg:hidden flex-1 flex flex-col overflow-hidden">
+      <div className="md:hidden flex-1 flex flex-col overflow-hidden">
         {/* Menu Tab */}
         <div className={`${mobileActiveTab === 'menu' ? 'flex' : 'hidden'} flex-1 flex-col overflow-hidden`}>
           <div className="flex-1 overflow-y-auto">

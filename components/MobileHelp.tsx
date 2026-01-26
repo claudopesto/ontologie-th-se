@@ -10,7 +10,7 @@ export default function MobileHelp() {
       {/* Help Button - Only visible on mobile */}
       <button
         onClick={() => setIsOpen(true)}
-        className="lg:hidden fixed bottom-2 right-4 text-white p-3 rounded-full shadow-lg transition-colors z-40 pointer-events-auto hover:opacity-90"
+        className="md:hidden fixed bottom-2 right-4 text-white p-3 rounded-full shadow-lg transition-colors z-40 pointer-events-auto hover:opacity-90"
         style={{ backgroundColor: '#F52CA8' }}
         aria-label="Aide"
       >
@@ -21,7 +21,7 @@ export default function MobileHelp() {
 
       {/* Help Modal */}
       {isOpen && (
-        <div className="lg:hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-sm w-full max-h-[80vh] overflow-y-auto">
             <div className="p-4 border-b border-gray-200">
               <div className="flex justify-between items-center">
