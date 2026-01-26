@@ -12,9 +12,9 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
     return (
       <div className="p-4 sm:p-6 bg-white border-t border-gray-300 h-full flex flex-col items-center justify-center">
         <img 
-          src="/IMG_0133.png" 
+          src="/IMG_0133-removebg-preview.png" 
           alt="Illustration recherche" 
-          className="max-w-xs sm:max-w-sm md:max-w-md w-full h-auto mb-6 opacity-90"
+          className="max-w-xs sm:max-w-sm md:max-w-md w-full h-auto mb-6"
           loading="lazy"
         />
         <div className="text-center">
