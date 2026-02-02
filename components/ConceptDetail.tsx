@@ -29,13 +29,13 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
     );
   }
 
-  // Determine which hypothesis to show based on concept's travaux
+  // Determine which hypothesis to show (display if hypothesis exists, regardless of travaux field)
   const getHypothesis = () => {
     const hypotheses = [];
     
-    // Add CIENS hypothesis first if exists and travaux includes CIENS
+    // Add CIENS hypothesis if it exists
     const ciensTrimmed = concept.hypothese_ciens?.trim();
-    if (concept.travaux.includes('CIENS') && ciensTrimmed) {
+    if (ciensTrimmed) {
       hypotheses.push({
         type: 'CIENS',
         text: ciensTrimmed,
@@ -43,9 +43,9 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
       });
     }
     
-    // Add Thèse hypothesis if exists and travaux includes Thèse
+    // Add Thèse hypothesis if it exists
     const theseTrimmed = concept.hypothese_these?.trim();
-    if (concept.travaux.includes('Thèse') && theseTrimmed) {
+    if (theseTrimmed) {
       hypotheses.push({
         type: 'Thèse',
         text: theseTrimmed,
