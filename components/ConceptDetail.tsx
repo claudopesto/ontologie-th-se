@@ -172,8 +172,8 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
         </div>
       )}
 
-      {/* Debug info for relations and hypothesis - temporarily enabled in production */}
-      {(
+      {/* Debug info for relations and hypothesis */}
+      {process.env.NODE_ENV === 'development' && (
         <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs">
           <strong>Debug - Relations:</strong> "{concept.relations || 'aucune'}"
           <br />
