@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Concept } from '@/types/ontology';
 import { fetchConceptsFromSheet } from '@/lib/googleSheets';
@@ -9,7 +10,20 @@ import ConceptSidebar from '@/components/ConceptSidebar';
 import ConceptDetail from '@/components/ConceptDetail';
 import MobileHelp from '@/components/MobileHelp';
 
+// Wrapper component to handle Suspense for useSearchParams
 export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen items-center justify-center bg-white">
+        <p className="text-xl text-gray-600">Chargement...</p>
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+function HomeContent() {
   const [concepts, setConcepts] = useState<Concept[]>([]);
   const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,6 +39,9 @@ export default function Home() {
   const [rightPanelWidth, setRightPanelWidth] = useState(384); // w-96 = 384px
   const minPanelWidth = 200;
   const maxPanelWidth = 600;
+
+  // URL search params for deep linking to concepts
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     async function loadConcepts() {
@@ -43,6 +60,22 @@ export default function Home() {
 
     loadConcepts();
   }, []);
+
+  // Handle concept parameter from URL (e.g., from blog links)
+  useEffect(() => {
+    if (concepts.length > 0) {
+      const conceptParam = searchParams.get('concept');
+      if (conceptParam) {
+        // Find concept by label (case-insensitive)
+        const foundConcept = concepts.find(
+          c => c.label.toLowerCase() === conceptParam.toLowerCase()
+        );
+        if (foundConcept) {
+          setSelectedConcept(foundConcept);
+        }
+      }
+    }
+  }, [concepts, searchParams]);
 
   // Auto switch to detail tab when concept is selected on mobile
   useEffect(() => {
