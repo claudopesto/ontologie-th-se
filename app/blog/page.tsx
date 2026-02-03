@@ -29,7 +29,7 @@ export default function BlogPage() {
           Blog
         </h1>
         <p className="text-gray-600 text-lg mb-16 leading-relaxed">
-          Réflexions et analyses autour des concepts explorés dans le cadre de mes recherches
+          Notes éparses en mode échec.
         </p>
 
         {/* Articles list */}
