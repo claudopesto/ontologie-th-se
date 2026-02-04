@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: PageProps) {
   }
 
   return {
-    title: `${article.frontmatter.title} | Blog`,
+    title: `${article.frontmatter.title} | Pensées en vrac`,
     description: article.frontmatter.summary,
   };
 }

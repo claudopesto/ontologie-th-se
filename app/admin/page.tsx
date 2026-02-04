@@ -262,7 +262,7 @@ Commencez à écrire ici...
       <header className="bg-white border-b border-stone-200 p-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-4">
           <a href="/blog" className="text-stone-600 hover:text-stone-900">
-            ← Blog
+            ← Pensées en vrac
           </a>
           <h1 className="text-lg font-serif text-stone-800">Éditeur</h1>
         </div>

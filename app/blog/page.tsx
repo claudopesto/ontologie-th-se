@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getAllArticles } from '@/lib/articles';
 
 export const metadata = {
-  title: 'Blog | Ontologie',
+  title: 'Pensées en vrac | Ontologie',
   description: 'Articles et réflexions sur les concepts de la thèse',
 };
 
@@ -26,7 +26,7 @@ export default function BlogPage() {
       {/* Main content */}
       <main className="max-w-2xl mx-auto px-6 py-16">
         <h1 className="font-serif text-4xl md:text-5xl font-normal text-gray-900 mb-4">
-          Blog
+          Pensées en vrac
         </h1>
         <p className="text-gray-600 text-lg mb-16 leading-relaxed">
           Notes éparses en mode échec.

@@ -190,7 +190,7 @@ function HomeContent() {
           href="/blog" 
           className="text-white hover:text-blue-100 text-sm sm:text-base font-medium transition-colors"
         >
-          Blog →
+          Pensées en vrac →
         </Link>
       </header>
 
