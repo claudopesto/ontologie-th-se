@@ -160,16 +160,30 @@ export default function AdminPage() {
     setIsLoading(true);
     try {
       const slug = selectedArticle.filename.replace('.mdx', '');
+      
+      // Récupérer le SHA actuel avant suppression
+      const getResponse = await fetch(`/api/articles/${slug}`, {
+        headers: {
+          Authorization: `Bearer ${password}`,
+        },
+      });
+      
+      if (!getResponse.ok) throw new Error('Article non trouvé');
+      const currentData = await getResponse.json();
+      
       const response = await fetch(`/api/articles/${slug}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${password}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ sha: selectedArticle.sha }),
+        body: JSON.stringify({ sha: currentData.sha }),
       });
 
-      if (!response.ok) throw new Error('Erreur suppression');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erreur suppression');
+      }
 
       showMessage('Article supprimé');
       setSelectedArticle(null);
