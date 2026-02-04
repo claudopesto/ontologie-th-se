@@ -145,12 +145,14 @@ export async function DELETE(
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Erreur suppression');
+      console.error('GitHub DELETE error:', error);
+      return NextResponse.json({ error: error.message || 'Erreur GitHub' }, { status: response.status });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Erreur suppression article:', error);
-    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Erreur serveur';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

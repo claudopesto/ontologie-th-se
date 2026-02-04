@@ -191,7 +191,8 @@ export default function AdminPage() {
       fetchArticles();
     } catch (error) {
       console.error(error);
-      showMessage('Erreur lors de la suppression');
+      const msg = error instanceof Error ? error.message : 'Erreur inconnue';
+      showMessage(`Erreur: ${msg}`);
     }
     setIsLoading(false);
   };
