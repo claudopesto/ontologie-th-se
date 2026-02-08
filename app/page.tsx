@@ -352,9 +352,9 @@ function HomeContent() {
 
       {/* Fullscreen Graph Modal */}
       {isGraphFullscreen && (
-        <div className="fixed inset-0 z-50 bg-white">
+        <div className="fixed inset-0 z-50 bg-white flex flex-col">
           {/* Header */}
-          <div className="absolute top-0 left-0 right-0 h-14 bg-white/95 backdrop-blur-sm border-b border-gray-200 flex items-center justify-between px-4 z-10">
+          <div className="h-14 bg-white/95 backdrop-blur-sm border-b border-gray-200 flex items-center justify-between px-4 flex-shrink-0">
             <h2 className="text-lg font-semibold text-gray-800">Graphe de l&apos;ontologie</h2>
             <button
               onClick={() => setIsGraphFullscreen(false)}
@@ -368,32 +368,30 @@ function HomeContent() {
             </button>
           </div>
           
-          {/* Graph */}
-          <div className="absolute inset-0 pt-14">
-            <OntologyGraph
-              concepts={concepts}
-              onNodeClick={(concept) => {
-                setSelectedConcept(concept);
-                setIsGraphFullscreen(false);
-              }}
-              selectedFilter={selectedFilter}
-              selectedCategory={selectedCategory}
-            />
-          </div>
-          
-          {/* Selected concept indicator */}
-          {selectedConcept && (
-            <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl shadow-lg p-4 border border-gray-200">
-              <p className="text-sm text-gray-500">Concept sélectionné</p>
-              <p className="font-semibold text-gray-800">{selectedConcept.label}</p>
-              <button
-                onClick={() => setIsGraphFullscreen(false)}
-                className="mt-2 text-sm text-blue-600 hover:text-blue-800"
-              >
-                Voir la définition →
-              </button>
+          {/* Content: Graph + Definition Panel */}
+          <div className="flex-1 flex overflow-hidden">
+            {/* Graph */}
+            <div className={`${selectedConcept ? 'w-2/3' : 'w-full'} h-full transition-all duration-300`}>
+              <OntologyGraph
+                concepts={concepts}
+                onNodeClick={setSelectedConcept}
+                selectedFilter={selectedFilter}
+                selectedCategory={selectedCategory}
+              />
             </div>
-          )}
+            
+            {/* Definition Panel */}
+            {selectedConcept && (
+              <div className="w-1/3 h-full border-l border-gray-200 overflow-y-auto bg-white">
+                <ConceptDetail 
+                  concept={selectedConcept}
+                  onReturnToGraph={() => setSelectedConcept(null)}
+                  concepts={concepts}
+                  onConceptClick={setSelectedConcept}
+                />
+              </div>
+            )}
+          </div>
         </div>
       )}
 
