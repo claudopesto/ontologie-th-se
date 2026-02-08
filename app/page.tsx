@@ -34,6 +34,9 @@ function HomeContent() {
   // Mobile navigation state
   const [mobileActiveTab, setMobileActiveTab] = useState<'menu' | 'graph' | 'detail'>('graph');
   
+  // Fullscreen graph modal
+  const [isGraphFullscreen, setIsGraphFullscreen] = useState(false);
+  
   // Window resize state for desktop layout
   const [leftPanelWidth, setLeftPanelWidth] = useState(320); // w-80 = 320px
   const [rightPanelWidth, setRightPanelWidth] = useState(384); // w-96 = 384px
@@ -254,13 +257,26 @@ function HomeContent() {
         </div>
 
         {/* Center: Graph Visualization */}
-        <div className="flex-1 h-full border border-gray-300 rounded-xl overflow-hidden shadow-sm min-h-0">
+        <div className="flex-1 h-full border border-gray-300 rounded-xl overflow-hidden shadow-sm min-h-0 relative">
           <OntologyGraph
             concepts={concepts}
             onNodeClick={setSelectedConcept}
             selectedFilter={selectedFilter}
             selectedCategory={selectedCategory}
           />
+          {/* Fullscreen button */}
+          <button
+            onClick={() => setIsGraphFullscreen(true)}
+            className="absolute top-3 right-3 bg-white/90 hover:bg-white p-2 rounded-lg shadow-md transition-all hover:scale-105 z-10"
+            title="Agrandir le graphe"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <polyline points="9 21 3 21 3 15"></polyline>
+              <line x1="21" y1="3" x2="14" y2="10"></line>
+              <line x1="3" y1="21" x2="10" y2="14"></line>
+            </svg>
+          </button>
         </div>
 
         {/* Right: Concept Definition */}
@@ -333,6 +349,53 @@ function HomeContent() {
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Graph Modal */}
+      {isGraphFullscreen && (
+        <div className="fixed inset-0 z-50 bg-white">
+          {/* Header */}
+          <div className="absolute top-0 left-0 right-0 h-14 bg-white/95 backdrop-blur-sm border-b border-gray-200 flex items-center justify-between px-4 z-10">
+            <h2 className="text-lg font-semibold text-gray-800">Graphe de l&apos;ontologie</h2>
+            <button
+              onClick={() => setIsGraphFullscreen(false)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              title="Fermer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          
+          {/* Graph */}
+          <div className="absolute inset-0 pt-14">
+            <OntologyGraph
+              concepts={concepts}
+              onNodeClick={(concept) => {
+                setSelectedConcept(concept);
+                setIsGraphFullscreen(false);
+              }}
+              selectedFilter={selectedFilter}
+              selectedCategory={selectedCategory}
+            />
+          </div>
+          
+          {/* Selected concept indicator */}
+          {selectedConcept && (
+            <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl shadow-lg p-4 border border-gray-200">
+              <p className="text-sm text-gray-500">Concept sélectionné</p>
+              <p className="font-semibold text-gray-800">{selectedConcept.label}</p>
+              <button
+                onClick={() => setIsGraphFullscreen(false)}
+                className="mt-2 text-sm text-blue-600 hover:text-blue-800"
+              >
+                Voir la définition →
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Mobile Help Component */}
       <MobileHelp />
