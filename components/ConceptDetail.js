@@ -1,19 +1,10 @@
-import { Concept } from '@/types/ontology';
-
-interface ConceptDetailProps {
-  concept: Concept | null;
-  onReturnToGraph?: () => void;
-  concepts?: Concept[];
-  onConceptClick?: (concept: Concept) => void;
-}
-
-export default function ConceptDetail({ concept, onReturnToGraph, concepts = [], onConceptClick }: ConceptDetailProps) {
+export default function ConceptDetail({ concept, onReturnToGraph, concepts = [], onConceptClick }) {
   if (!concept) {
     return (
       <div className="p-4 sm:p-6 bg-white border-t border-gray-300 h-full flex flex-col items-center justify-center">
-        <img 
-          src="/IMG_0133-removebg-preview.png" 
-          alt="Illustration recherche" 
+        <img
+          src="/IMG_0133-removebg-preview.png"
+          alt="Illustration recherche"
           className="max-w-xs sm:max-w-sm md:max-w-md w-full h-auto mb-6"
           loading="lazy"
         />
@@ -22,41 +13,37 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
             Sélectionnez un concept pour voir sa définition
           </p>
           <p className="text-gray-400 text-xs mt-2 lg:hidden">
-            Utilisez l'onglet "Graphique" pour choisir un concept
+            Utilisez l&apos;onglet &quot;Graphique&quot; pour choisir un concept
           </p>
         </div>
       </div>
     );
   }
 
-  // Determine which hypothesis to show (display if hypothesis exists, regardless of travaux field)
   const getHypothesis = () => {
     const hypotheses = [];
-    
-    // Add CIENS hypothesis if it exists
+
     const ciensTrimmed = concept.hypothese_ciens?.trim();
     if (ciensTrimmed) {
       hypotheses.push({
         type: 'CIENS',
         text: ciensTrimmed,
-        label: 'Hypothèse de recherche travaillée dans le cadre du projet portant sur la guerre cognitive menée au CIENS'
+        label: 'Hypothèse de recherche travaillée dans le cadre du projet portant sur la guerre cognitive menée au CIENS',
       });
     }
-    
-    // Add Thèse hypothesis if it exists
+
     const theseTrimmed = concept.hypothese_these?.trim();
     if (theseTrimmed) {
       hypotheses.push({
         type: 'Thèse',
         text: theseTrimmed,
-        label: 'Hypothèse de recherche travaillée dans le cadre de la thèse'
+        label: 'Hypothèse de recherche travaillée dans le cadre de la thèse',
       });
     }
-    
+
     return hypotheses;
   };
 
-  // Get related concepts from the relations field
   const getRelatedConcepts = () => {
     if (!concept.relations || !concept.relations.trim()) {
       return [];
@@ -64,30 +51,36 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
 
     const relatedLabels = concept.relations
       .split(';')
-      .map(label => label.trim())
-      .filter(label => label);
+      .map((label) => label.trim())
+      .filter((label) => label);
 
-    // Find the actual concept objects for these labels using case-insensitive matching
     const relatedConcepts = relatedLabels
-      .map(label => {
-        // Try exact match first
-        let found = concepts.find(c => c.label === label);
-        
-        // If not found, try case-insensitive match
+      .map((label) => {
+        let found = concepts.find((c) => c.label === label);
+
         if (!found) {
-          found = concepts.find(c => c.label.toLowerCase() === label.toLowerCase());
+          found = concepts.find((c) => c.label.toLowerCase() === label.toLowerCase());
         }
-        
-        // If still not found, try partial match (contains)
+
         if (!found) {
-          found = concepts.find(c => c.label.toLowerCase().includes(label.toLowerCase()) || label.toLowerCase().includes(c.label.toLowerCase()));
+          found = concepts.find(
+            (c) =>
+              c.label.toLowerCase().includes(label.toLowerCase()) ||
+              label.toLowerCase().includes(c.label.toLowerCase())
+          );
         }
-        
+
         return found;
       })
-      .filter(c => c !== undefined) as Concept[];
+      .filter((c) => c !== undefined);
 
-    return relatedConcepts;
+    // Dédoublonne : plusieurs termes de "relations" peuvent avoir été
+    // associés au même concept réel via la correspondance floue.
+    const uniqueRelatedConcepts = relatedConcepts.filter(
+      (c, index, self) => self.findIndex((other) => other.label === c.label) === index
+    );
+
+    return uniqueRelatedConcepts;
   };
 
   const hypothesis = getHypothesis();
@@ -95,7 +88,6 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
 
   return (
     <div className="p-4 sm:p-6 bg-white border-t border-gray-300 h-full overflow-y-auto">
-      {/* Mobile: Back to graph button */}
       <div className="lg:hidden mb-4">
         <button
           onClick={onReturnToGraph}
@@ -119,7 +111,7 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
         </div>
       )}
 
-      {hypothesis && hypothesis.length > 0 && (
+      {hypothesis.length > 0 && (
         <div className="mb-6">
           {hypothesis.map((hyp, index) => (
             <div key={index} className="mb-4">
@@ -172,24 +164,6 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
         </div>
       )}
 
-      {/* Debug info for relations and hypothesis */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs">
-          <strong>Debug - Relations:</strong> "{concept.relations || 'aucune'}"
-          <br />
-          <strong>Related concepts found:</strong> {relatedConcepts.length}
-          <br />
-          <strong>Travaux:</strong> "{concept.travaux}"
-          <br />
-          <strong>Hypothèse Thèse:</strong> "{concept.hypothese_these || 'vide'}"
-          <br />
-          <strong>Hypothèse CIENS:</strong> "{concept.hypothese_ciens || 'vide'}"
-          <br />
-          <strong>Hypothèses affichées:</strong> {hypothesis.length}
-        </div>
-      )}
-
-      {/* Related Concepts Section */}
       {relatedConcepts.length > 0 && (
         <div className="mb-6">
           <h3 className="text-base sm:text-lg font-semibold mb-3 text-gray-800">
@@ -213,7 +187,6 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
         </div>
       )}
 
-      {/* Mobile: Bottom spacing for better scrolling */}
       <div className="lg:hidden h-16"></div>
     </div>
   );

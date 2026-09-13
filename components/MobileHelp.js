@@ -7,7 +7,6 @@ export default function MobileHelp() {
 
   return (
     <>
-      {/* Help Button - Only visible on phones */}
       <button
         onClick={() => setIsOpen(true)}
         className="sm:hidden fixed bottom-2 right-4 text-white p-3 rounded-full shadow-lg transition-colors z-40 pointer-events-auto hover:opacity-90"
@@ -19,13 +18,12 @@ export default function MobileHelp() {
         </svg>
       </button>
 
-      {/* Help Modal */}
       {isOpen && (
         <div className="sm:hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-sm w-full max-h-[80vh] overflow-y-auto">
             <div className="p-4 border-b border-gray-200">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900">Guide d'utilisation</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Guide d&apos;utilisation</h3>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="text-gray-400 hover:text-gray-600"
@@ -36,18 +34,17 @@ export default function MobileHelp() {
                 </button>
               </div>
             </div>
-            
+
             <div className="p-4 space-y-4 text-sm">
               <div>
-                <h4 className="font-semibold text-gray-800 mb-2">📋 Onglet Filtres & Concepts</h4>
+                <h4 className="font-semibold text-gray-800 mb-2">📋 Onglet Filtres &amp; Concepts</h4>
                 <p className="text-gray-600">
                   • Recherchez des concepts par nom<br/>
-                  • Filtrez par travaux (Thèse/CIENS)<br/>
-                  • Sélectionnez des catégories<br/>
+                  • Filtrez par axe de recherche<br/>
                   • Touchez un concept pour voir sa définition
                 </p>
               </div>
-              
+
               <div>
                 <h4 className="font-semibold text-gray-800 mb-2">🕸️ Onglet Graphique</h4>
                 <p className="text-gray-600">
@@ -57,22 +54,22 @@ export default function MobileHelp() {
                   • Les liens montrent les relations entre concepts
                 </p>
               </div>
-              
+
               <div>
                 <h4 className="font-semibold text-gray-800 mb-2">📖 Onglet Définition</h4>
                 <p className="text-gray-600">
                   • Détails complets du concept sélectionné<br/>
                   • Définitions et hypothèses de recherche<br/>
-                  • Citations d'auteurs et références<br/>
+                  • Citations d&apos;auteurs et références<br/>
                   • Défilement vertical pour lire tout le contenu
                 </p>
               </div>
-              
+
               <div className="bg-blue-50 p-3 rounded-lg">
                 <h4 className="font-semibold text-blue-800 mb-1">💡 Astuce</h4>
                 <p className="text-blue-700 text-xs">
-                  Naviguez entre les onglets en touchant les boutons en haut. 
-                  Un point bleu indique qu'un concept est sélectionné dans l'onglet Définition.
+                  Naviguez entre les onglets en touchant les boutons en haut.
+                  Un point bleu indique qu&apos;un concept est sélectionné dans l&apos;onglet Définition.
                 </p>
               </div>
             </div>
