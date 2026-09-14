@@ -180,7 +180,7 @@ export default function OntologyGraph({ concepts, onNodeClick, selectedAxe, sele
       {highlightNodes.size > 0 && (
         <button
           onClick={handleReset}
-          className="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+          className="absolute top-16 right-3 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
           aria-label="Réinitialiser le zoom"
         >
           <svg

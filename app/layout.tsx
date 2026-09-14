@@ -21,7 +21,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "Ontologie - Recherches universitaires d'Elsa Novelli",
-  description: "Visualisation interactive des concepts de recherche en cybersécurité et guerre cognitive",
+  description: "Visualisation interactive des concepts de recherche d'Elsa Novelli portant sur les stratégies d'influences numériques",
   icons: {
     icon: "/icon1.png",
   },
