@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   title: "Ontologie - Recherches universitaires d'Elsa Novelli",
   description: "Visualisation interactive des concepts de recherche en cybersécurité et guerre cognitive",
   icons: {
-    icon: "/favicon.svg",
+    icon: "/icon1.png",
   },
 };
 
