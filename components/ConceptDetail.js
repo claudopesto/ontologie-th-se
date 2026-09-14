@@ -28,7 +28,7 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
       hypotheses.push({
         type: 'CIENS',
         text: ciensTrimmed,
-        label: 'Hypothèse de recherche travaillée dans le cadre du projet portant sur la guerre cognitive menée au CIENS',
+        label: 'Hypothèse de recherche',
       });
     }
 
@@ -37,7 +37,7 @@ export default function ConceptDetail({ concept, onReturnToGraph, concepts = [],
       hypotheses.push({
         type: 'Thèse',
         text: theseTrimmed,
-        label: 'Hypothèse de recherche travaillée dans le cadre de la thèse',
+        label: 'Hypothèse de recherche',
       });
     }
 
