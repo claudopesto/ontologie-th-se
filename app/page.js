@@ -140,13 +140,15 @@ function HomeContent() {
 
   return (
     <div className="flex flex-col bg-white min-h-screen lg:h-screen">
-      <header className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 shadow-md flex items-center justify-between" style={{ backgroundColor: '#241454' }}>      <Link
-      href="/blog"
-      className="text-white hover:text-blue-100 text-sm sm:text-base font-medium transition-colors"
-    >
-      Pensées en vrac →
-      </Link>
-      </header>
+     <header className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 shadow-md flex items-center justify-between" style={{ backgroundColor: '#241454' }}>
+  <h1 className="text-sm sm:text-lg md:text-2xl font-bold text-white">Recherches universitaires d&apos;Elsa Novelli</h1>
+  <Link
+    href="/blog"
+    className="text-white hover:text-blue-100 text-sm sm:text-base font-medium transition-colors"
+  >
+    Pensées en vrac →
+  </Link>
+</header>
 
       <div className="sm:hidden border-b border-gray-300">
         <div className="flex">
